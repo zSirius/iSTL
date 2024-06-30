@@ -48,16 +48,22 @@ namespace istl
         obj *result_obj = (obj *)(chunk);
         if(nobjs > 1){
             size_t index = FREELIST_INDEX(bytes);
-            obj *obj_to_insert = (obj *)(chunk + bytes);
-            for(int i=0; i<nobjs-1; i++){
-                obj *next_obj = (obj *)((char *)obj_to_insert + bytes);
-                obj_to_insert->next = free_list[index];
-                free_list[index] = obj_to_insert;
-                obj_to_insert = next_obj;
+            free_list[index] = (obj *)(chunk + bytes);
+            obj *pre_obj = (obj *)(chunk + bytes);
+            for(int i=1; i<nobjs; i++){
+                obj *next_obj = (obj *)((char *)pre_obj + bytes);
+                if(i == nobjs-1){
+                    pre_obj->next = 0;
+                    break;
+                }else{
+                    pre_obj->next = next_obj;
+                    pre_obj = next_obj;
+                }
             }
         }
         return result_obj;
     }
+
 
     char *alloc::chunk_alloc(size_t bytes, size_t &nobjs){
         char *result = 0;
@@ -97,5 +103,7 @@ namespace istl
             chunk_end = chunk_start + bytes_to_malloc;
             return chunk_alloc(bytes,nobjs);
         }
+        return result;
     }
+
 } // namespace istl

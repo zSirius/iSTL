@@ -2,6 +2,7 @@
 #define _ALLOC_H_
 
 #include <cstdlib>
+#include <stdio.h>
 namespace istl
 {
     class alloc
@@ -12,9 +13,8 @@ namespace istl
         static const int NFREELISTS = MAXBYTES/ALIGN;
         static const int NOBJS = 20;
     private:
-        union obj{
-            union obj *next;
-            char client[1];
+        struct obj{
+            struct obj *next;
         };
         static obj *free_list[NFREELISTS];
 
@@ -33,7 +33,15 @@ namespace istl
         static void *reallocate(void *ptr, size_t old_sz, size_t new_sz);
     /*debug*/
     public:
-        static obj *get_list(size_t index){ return free_list[FREELIST_INDEX(index)]; }
+        static void print_list(size_t index){ 
+            obj *list = free_list[index];
+            printf("[%d]:", (int)index);
+            while(list!=0){
+                printf("%p -> ", list);
+                list = list->next;
+            }
+            printf("null\n");
+         }
     };
     
 } // namespace istl
