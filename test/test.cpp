@@ -1,7 +1,16 @@
 #include <iostream>
 #include <ctime>
+#include "../include/vector.h"
 #include "../include/alloc.h"
 using namespace std;
+
+class test
+{
+public:
+    test(){ cout << "test()"<<endl; };
+    ~test() { cout << "~test()" << endl; };
+};
+
 
 
 int main(){
@@ -13,16 +22,15 @@ int main(){
     //     istl::alloc::print_list(j);
     // }
 
-    std::srand(std::time(0));
-    for(int i=0; i<1e7; i++){
-        int random_number = std::rand() % 128 + 1;
-        std::cout << "[" << i << "]: " << random_number << std::endl;
-        void *ptr = istl::alloc::allocate(random_number);
-    }
+    // std::srand(std::time(0));
+    // for(int i=0; i<1e3; i++){
+    //     int random_number = std::rand() % 128 + 1;
+    //     std::cout << "[" << i << "]: " << random_number << std::endl;
+    //     void *ptr = istl::alloc::allocate(random_number);
+    // }
 
-    for(int i=0; i<16; i++){
-        istl::alloc::print_list(i);
-    }
-
+    // for(int i=0; i<16; i++){
+    //     istl::alloc::print_list(i);
+    // }
     return 0;
 }
