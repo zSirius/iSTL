@@ -1,15 +1,16 @@
 #include <iostream>
 #include <ctime>
+#include <type_traits>
 #include "../include/vector.h"
 #include "../include/alloc.h"
 using namespace std;
 
 class test
 {
-public:
-    test(){ cout << "test()"<<endl; };
-    ~test() { cout << "~test()" << endl; };
+private:
+static int a;
 };
+int test:: a = 100;
 
 
 
@@ -32,5 +33,6 @@ int main(){
     // for(int i=0; i<16; i++){
     //     istl::alloc::print_list(i);
     // }
+    cout << is_pod<test>::value << endl;
     return 0;
 }

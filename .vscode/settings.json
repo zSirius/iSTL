@@ -15,6 +15,7 @@
         "vector": "cpp",
         "xmemory": "cpp",
         "xlocale": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "ostream": "cpp"
     }
 }
