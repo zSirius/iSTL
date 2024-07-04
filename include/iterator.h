@@ -127,12 +127,17 @@ namespace istl
 	}
 
 
+    template<typename InputIterator>
+    typename istl::iterator_traits<InputIterator>::difference_type
+    distance(InputIterator first, InputIterator last){
+        typename istl::iterator_traits<InputIterator>::difference_type n=0;
+        while(first!=last){
+            ++first;
+            ++n;
+        }
+        return n;
+    }
 
-
-    
-
-    
-    
 
 
 } // namespace istl
