@@ -3,7 +3,6 @@
 #include <type_traits>
 
 #include "uninitialized.h"
-#include "vector.h"
 
 using namespace std;
 
