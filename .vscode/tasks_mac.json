@@ -1,10 +1,9 @@
 {
-    "version": "2.0.0",
     "tasks": [
         {
             "type": "cppbuild",
             "label": "C/C++: g++ 生成活动文件",
-            "command": "/usr/lib/ccache/g++",
+            "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
@@ -16,7 +15,7 @@
                 "${workspaceFolder}/test/test"
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${fileDirname}"
             },
             "problemMatcher": [
                 "$gcc"
@@ -27,5 +26,6 @@
             },
             "detail": "调试器生成的任务。"
         }
-    ]
+    ],
+    "version": "2.0.0"
 }

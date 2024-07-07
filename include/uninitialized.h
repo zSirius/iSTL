@@ -70,7 +70,7 @@ namespace istl
     ForwardIterator _uninitialized_fill_n_aux(ForwardIterator first, Size n, const T& value, std::false_type){
         ForwardIterator current = first;
         for(Size i=0; i<n; ++i, ++current){
-            new (static_cast<void*>(&(current))) T(value);
+            new (static_cast<void*>(&(*current))) T(value);
         }
         return current;
     }

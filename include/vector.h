@@ -1,187 +1,130 @@
-// #ifndef _VECTOR_H_
-// #define _VECTOR_H_
+#ifndef _VECTOR_H_
+#define _VECTOR_H_
 
-// #include<stddef.h>
-// #include<assert.h>
-// #include "allocator.h"
+#include<stddef.h>
+#include<assert.h>
+#include "allocator.h"
+#include "ReverseIterator.h"
 
-// namespace istl
-// {
-//     template <typename T, class Alloc = allocator<T>>
-//     class vector
-//     {
-//     private:
-//         T* _start;
-//         T* _finish;
-//         T* _endOfStorage;
+namespace istl
+{
+    /* https://en.cppreference.com/w/cpp/container/vector */
+    template <typename T, class Alloc = allocator<T>>
+    class vector
+    {
+    private:
+        T* _start;
+        T* _finish;
+        T* _endOfStorage;
 
-//         typedef Alloc dataAllocator;
-//     public:
-//         typedef T                               value_type;
-//         typedef T*                              iterator;
-//         typedef const T* const_iterator;
-//         //typedef reverse_iterator_t<T*>				reverse_iterator;
-// 		//typedef reverse_iterator_t<const T*>				const_reverse_iterator;
-//         typedef T*                              pointer;
-//         typedef const t*                        const_pointer;
-//         typedef T&                              reference;
-//         typedef const T&                        const_reference;
-//         typedef size_t                          size_type;
-//         typedef ptrdiff_t                       difference_type;
+        typedef Alloc dataAllocator;
+    public:
+        typedef T                               value_type;
+        typedef T*                              iterator;
+        typedef const T* const_iterator;
+        typedef reverse_iterator_t<T*>			reverse_iterator;
+		typedef reverse_iterator_t<const T*>	const_reverse_iterator;
+        typedef T*                              pointer;
+        typedef const t*                        const_pointer;
+        typedef T&                              reference;
+        typedef const T&                        const_reference;
+        typedef size_t                          size_type;
+        typedef ptrdiff_t                       difference_type;
 
-//         //构造、析构、复制函数
-//         vector():_start(nullptr), _finish(nullptr), _endOfStorage(nullptr){}
+        //构造、析构、复制函数
+        vector():_start(nullptr), _finish(nullptr), _endOfStorage(nullptr){}
         
-//         explicit vector(const size_type n);
-//         vector(const size_type n, const value_type& value);
-//         //vector(size_t n, const value_type& val = value_type());
+        explicit vector(const size_type n);
+        vector(const size_type n, const value_type& value);
+        //vector(size_t n, const value_type& val = value_type());
 		
-//         template<class InputIterator>
-// 		vector(InputIterator first, InputIterator last);
+        template<class InputIterator>
+		vector(InputIterator first, InputIterator last);
         
-//         vector(const vector& v);
-//         vector(vector&& v);
-// 		vector& operator = (const vector& v);
-// 		vector& operator = (vector&& v);
+        vector(const vector& v);
+        vector(vector&& v);
+		
+        vector& operator = (const vector& v);
+		vector& operator = (vector&& v);
 
-//         ~vector();
+        ~vector();
 
 
-//         /*迭代器相关*/
-//         iterator begin(){ return _start; }
-//         iterator end(){ return _finish; }
-//         const_iterator begin()const{ return _start; }
-//         const_iterator end()const{ return _finish; }
+        /*迭代器相关*/
+        iterator begin(){ return _start; }
+        const_iterator begin()const{ return _start; }
+        const_iterator cbegin()const{ return _start; } 
+        
+        iterator end(){ return _finish; }
+        const_iterator end()const{ return _finish; }
+        const_iterator cend()const{ return _finish; }
 
-//         /*基本函数*/
-//         size_t capacity(){ return _endOfStorage-_start; }
-//         size_t size(){ return _finish-_start; }
-//         void reserve(size_t n);
-//         void resize(size_t n, const value_type& val = value_type());
-//         bool empty(){ return _start == _finish; }
+        reverse_iterator rbegin(){ return reverse_iterator(_finish); }
+        const_reverse_iterator crbegin()const{ return const_reverse_iterator(_finish); }
+        reverse_iterator rend(){ return reverse_iterator(_start); }
+        const_reverse_iterator crend()const{ return const_reverse_iterator(_start); }
+        
 
-//         /*增删改查*/
-//         void push_back(const value_type& val);
-//         void pop_back();
-//         iterator insert(iterator pos, const value_type& val);
-//         iterator erase(iterator pos);
+        /* 容量相关函数 */
+        difference_type size(){ return _finish-_start; }
+        difference_type capacity(){ return _endOfStorage-_start; }
+        bool empty(){ return _start == _finish; }
+        void reserve(size_type n);
+        void resize(size_type n, const value_type& val = value_type());
+        void shrink_to_fit();
 
-//         /*运算符重载*/
-//         value_type& operator[](size_t i){ return *(_start+i); }
-//         value_type& operator[](size_t i)const{ return *(_start+i); }
-//         //比较操作相关
-// 		bool operator == (const vector& v)const;
-// 		bool operator != (const vector& v)const;
-//     };
+        /* 元素访问 */
+        reference operator[](const difference_type i){ return *(begin()+i); }
+        const_reference operator[](const difference_type i)const{ return *(cbegin()+i); }
+        reference front(){ return *(begin()); }
+        const_reference front()const{ return *(cbegin()); }
+        reference back(){ return *(end()-1); }
+        const_reference back()const { return *(end()-1); }
+        pointer data(){ return _start; }
+        const_pointer data()const{ return _start; }
 
-//     /*构造、析构函数*/
-//     template<typename T>
-//     vector<T>::vector(const vector& v){
-//         reserve(v.capacity());
-//         for(size_t i=0; i<v.size(); i++){
-//             push_back(v[i]);
-//         }
-//     }
 
-//     template<typename T>
-//     vector<T>::vector(size_t n, const value_type& val){
-//         _start = new value_type[n];
-//         _endOfStorage = _finish = _start + n;
-//         for(size_t i=0; i<n; i++){
-//             _start[i] = val;
-//         }
-//     }
-    
-//     template<typename T>
-//     vector<T>::~vector(){
-//         delete[] _start;
-//         _start = _finish = _endOfStorage = nullptr;
-//     }
 
-//     /*基本函数*/
-//     template<typename T>
-//     void vector<T>::reserve(size_t n){
-//         if(capacity() >= n) return;
-//         iterator new_start = new T[n];
-//         size_t old_size = size();
-//         //元素迁移
-//         if(_start != nullptr){
-//             for(size_t i=0; i<size(); i++){
-//                 new_start[i] = _start[i];
-//             }
-//         }
-//         delete[] _start;
-//         _start = new_start;
-//         _finish = _start + old_size;
-//         _endOfStorage = _start + n;
-//     }
+        /* 增删改 */
+        void clear();
+        void swap(vector &v);
 
-//     template<typename T>
-//     void vector<T>::resize(size_t n, const value_type& val){
-//         if(n<size()){
-//             _finish = _start + n;
-//         }else{
-//             reserve(n);
-//             while(_finish != _start+n){
-//                 *_finish = val;
-//                 ++_finish;
-//             }
-//         }
-//     }
+        void push_back(const value_type& val);
+        void pop_back();
 
-//     template<typename T>
-//     void vector<T>::push_back(const value_type& val){
-//         if(_finish == _endOfStorage){
-//             int newcapacity = capacity() == 0 ? 2 : 2*capacity();
-//             reserve(newcapacity);
-//         }
-//         *_finish = val;
-//         ++_finish;
-//     }
+        /* https://en.cppreference.com/w/cpp/container/vector/insert */
+        iterator insert(const_iterator pos, const value_type& value);
+        iterator insert(const_iterator pos, value_type&& value);
+        iterator insert(const_iterator pos, size_type count, const value_type& value);
+        template<typename InputIt>
+        iterator insert(const_iterator pos, InputIt first, InputIt last);
+        iterator insert(const_iterator pos, std::initializer_list<value_type> ilist);
 
-//     template<typename T>
-//     void vector<T>::pop_back(){
-//         assert(size()>0);
-//         --_finish;
-//     }
+        /* https://en.cppreference.com/w/cpp/container/vector/erase */
+        iterator erase(iterator pos);
+        //iterator erase(const_iterator pos);
+        iterator erase(iterator first, iterator last);
+        //iterator erase(const_iterator first, const_iterator last);
 
-//     template<typename T>
-//     typename vector<T>::iterator vector<T>::insert(iterator pos, const value_type& val){
-//         assert(pos>=_start && pos<=_finish);
-//         if(_finish == _endOfStorage){
-//             size_t site = pos - _start;
-//             int newcapacity = capacity() == 0 ? 2 : 2*capacity();
-//             reserve(newcapacity);
-//             pos = _start + site;
-//         }
-//         iterator ptr = _finish - 1;
-//         while(ptr >= pos){
-//             *(ptr+1) = *ptr;
-//             ptr--;
-//         }
-//         *pos = val;
-//         ++_finish;
-//         return pos;
-//     }
+        
+        //比较操作相关
+		bool operator == (const vector& v)const;
+		bool operator != (const vector& v)const;
 
-//     template<typename T>
-//     typename vector<T>::iterator vector<T>::erase(iterator pos){
-//         assert(pos>=_start && pos<_finish);
-//         iterator ptr = pos+1;
-//         while(ptr < _finish){
-//             *(ptr-1) = *ptr;
-//             ptr++;
-//         }
-//         --_finish;
-//         return pos;
-//     }
+        Alloc get_alloctor(){ return dataAllocator; }
 
-//     /*运算符重载*/
+    private:
+        void allocateAndFillN(const size_type n, const value_type& value);
+		template<typename InputIterator>
+		void allocateAndCopy(InputIterator first, InputIterator last);
+        void destroyAndDeallocateAll();
 
-    
+        size_type getNewCapacity(size_type len)const;
+        
 
-    
+    };
 
-// } // namespace istl
 
-// #endif
+} // namespace istl
+
+#endif
