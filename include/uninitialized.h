@@ -81,6 +81,30 @@ namespace istl
          return _uninitialized_fill_n_aux(first, n, value, IsTriviallyCopyable());
     }
 
+    /*******************************************************************************/
+    template<typename InputIterator, typename ForwardIterator>
+    ForwardIterator _uninitialized_move_aux(InputIterator first, InputIterator last, ForwardIterator result, std::true_type) {
+        typedef typename istl::iterator_traits<InputIterator>::value_type ValueType;
+        typename istl::iterator_traits<InputIterator>::difference_type n = istl::distance(first, last);
+        memmove(static_cast<void*>(result), static_cast<const void*>(&(*first)), n * sizeof(ValueType));
+        return result + n;
+    }
+
+    template<typename InputIterator, typename ForwardIterator>
+    ForwardIterator _uninitialized_move_aux(InputIterator first, InputIterator last, ForwardIterator result, std::false_type) {
+        ForwardIterator current = result;
+        for (; first != last; ++first, ++current) {
+            new (static_cast<void *>(&(*current))) typename istl::iterator_traits<ForwardIterator>::value_type(std::move(*first));
+        }
+        return current;
+    }
+    
+    template<typename InputIterator, typename ForwardIterator>
+    ForwardIterator uninitialized_move(InputIterator first, InputIterator last, ForwardIterator result) {
+        typedef typename std::is_trivial<typename istl::iterator_traits<InputIterator>::value_type>::type IsTriviallyMoveable;
+        return _uninitialized_move_aux(first, last, result, IsTriviallyMoveable());
+    }
+
 } // namespace istl
 
 

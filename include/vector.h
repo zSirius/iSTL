@@ -9,7 +9,7 @@
 namespace istl
 {
     /* https://en.cppreference.com/w/cpp/container/vector */
-    template <typename T, class Alloc = allocator<T>>
+    template <typename T, class Alloc = allocator<T> >
     class vector
     {
     private:
@@ -22,10 +22,10 @@ namespace istl
         typedef T                               value_type;
         typedef T*                              iterator;
         typedef const T* const_iterator;
-        typedef reverse_iterator_t<T*>			reverse_iterator;
-		typedef reverse_iterator_t<const T*>	const_reverse_iterator;
+        typedef reverse_iterator_t<T*>            reverse_iterator;
+        typedef reverse_iterator_t<const T*>    const_reverse_iterator;
         typedef T*                              pointer;
-        typedef const t*                        const_pointer;
+        typedef const T*                        const_pointer;
         typedef T&                              reference;
         typedef const T&                        const_reference;
         typedef size_t                          size_type;
@@ -37,15 +37,15 @@ namespace istl
         explicit vector(const size_type n);
         vector(const size_type n, const value_type& value);
         //vector(size_t n, const value_type& val = value_type());
-		
-        template<class InputIterator>
-		vector(InputIterator first, InputIterator last);
+        
+        template<typename InputIterator, typename = typename std::enable_if<!std::is_integral<InputIterator>::value>::type>
+        vector(InputIterator first, InputIterator last);
         
         vector(const vector& v);
         vector(vector&& v);
-		
+        
         vector& operator = (const vector& v);
-		vector& operator = (vector&& v);
+        vector& operator = (vector&& v);
 
         ~vector();
 
@@ -94,11 +94,11 @@ namespace istl
 
         /* https://en.cppreference.com/w/cpp/container/vector/insert */
         iterator insert(const_iterator pos, const value_type& value);
-        iterator insert(const_iterator pos, value_type&& value);
+        //iterator insert(const_iterator pos, value_type&& value);
         iterator insert(const_iterator pos, size_type count, const value_type& value);
-        template<typename InputIt>
+        template<typename InputIt, typename = typename std::enable_if<!std::is_integral<InputIt>::value>::type>
         iterator insert(const_iterator pos, InputIt first, InputIt last);
-        iterator insert(const_iterator pos, std::initializer_list<value_type> ilist);
+        //iterator insert(const_iterator pos, std::initializer_list<value_type> ilist);
 
         /* https://en.cppreference.com/w/cpp/container/vector/erase */
         iterator erase(iterator pos);
@@ -108,23 +108,21 @@ namespace istl
 
         
         //比较操作相关
-		bool operator == (const vector& v)const;
-		bool operator != (const vector& v)const;
+        bool operator == (const vector& v)const;
+        bool operator != (const vector& v)const;
 
-        Alloc get_alloctor(){ return dataAllocator; }
+        Alloc get_alloctor(){ return dataAllocator(); }
 
     private:
         void allocateAndFillN(const size_type n, const value_type& value);
-		template<typename InputIterator>
-		void allocateAndCopy(InputIterator first, InputIterator last);
+        template<typename InputIterator>
+        void allocateAndCopy(InputIterator first, InputIterator last);
         void destroyAndDeallocateAll();
 
         size_type getNewCapacity(size_type len)const;
-        
-
     };
-
-
 } // namespace istl
+
+#include "vector.impl.h"
 
 #endif
