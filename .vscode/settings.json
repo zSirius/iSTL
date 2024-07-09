@@ -66,6 +66,14 @@
         "system_error": "cpp",
         "type_traits": "cpp",
         "utility": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "__tree": "cpp",
+        "filesystem": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "*.inc": "cpp"
     }
 }

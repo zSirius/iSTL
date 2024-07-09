@@ -9,7 +9,7 @@
 namespace istl
 {
     /* https://en.cppreference.com/w/cpp/container/vector */
-    template <typename T, class Alloc = allocator<T> >
+    template <typename T, class Alloc = istl::allocator<T> >
     class vector
     {
     private:
@@ -21,8 +21,8 @@ namespace istl
     public:
         typedef T                               value_type;
         typedef T*                              iterator;
-        typedef const T* const_iterator;
-        typedef reverse_iterator_t<T*>            reverse_iterator;
+        typedef const T*                        const_iterator;
+        typedef reverse_iterator_t<T*>          reverse_iterator;
         typedef reverse_iterator_t<const T*>    const_reverse_iterator;
         typedef T*                              pointer;
         typedef const T*                        const_pointer;

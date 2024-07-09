@@ -6,7 +6,7 @@
 using namespace std;
 using namespace chrono;
 
-const int numTests = 1000;
+const int numTests = 1;
 const size_t testSize = 100000;
 
 #define MEASURE_TIME(operation, duration) \
@@ -15,7 +15,8 @@ const size_t testSize = 100000;
     stop = high_resolution_clock::now(); \
     duration += duration_cast<microseconds>(stop - start);
 
-int main() {
+void vectorBenchmark() {
+    
     std::vector<int> std_vec;
     istl::vector<int> istl_vec;
 
@@ -192,5 +193,4 @@ int main() {
     cout << "Average time for std::vector pop_back: " << std_vec_pop_back_time / numTests << " microseconds" << endl;
     cout << "Average time for istl::vector pop_back: " << istl_vec_pop_back_time / numTests << " microseconds" << endl;
 
-    return 0;
 }
