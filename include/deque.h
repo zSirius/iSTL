@@ -6,9 +6,11 @@
 
 namespace istl
 {
+    template<typename T, typename Alloc = istl::allocator<T> >
+    class deque;
     namespace it
     {
-        template<typename T, typename Alloc = istl::allocator<T> >
+        template<typename T>
         class deque_iterator : public iterator<bidirectional_iterator_tag, T>
         {
         public:
@@ -48,15 +50,20 @@ namespace istl
             template<typename T>
             friend typename deque_iterator<T>::difference_type operator - (const deque_iterator<T>& lhs, const deque_iterator<T>& rhs);
             template<typename T>
-            friend typename deque_iterator<T>::difference_type operator + (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
+            friend deque_iterator<T> operator + (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
             template<typename T>
-            friend typename deque_iterator<T>::difference_type operator + (typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
+            friend deque_iterator<T> operator + (typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
             template<typename T>
-            friend typename deque_iterator<T>::difference_type operator - (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
+            friend deque_iterator<T> operator - (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
             template<typename T>
-            friend typename deque_iterator<T>::difference_type operator - (typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
+            friend deque_iterator<T> operator - (typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
             template<typename T>
             friend void swap(deque_iterator<T> &lhs, deque_iterator<T> &rhs);
+
+        private:
+            T* getBlockTail(size_t mapIndex)const;
+            T* getBlockHead(size_t mapIndex)const;
+            size_t getBlockSize()const;
         };
     } // namespace it
     
@@ -64,7 +71,7 @@ namespace istl
 
 
     /* https://en.cppreference.com/w/cpp/container/deque */
-    template<typename T, typename Alloc = istl::allocator<T> >
+    template<typename T, typename Alloc>
     class deque
     {
     public:
@@ -90,13 +97,14 @@ namespace istl
         iterator _start;
         iterator _finish;
         map_pointer _map;
-        size_type _map_size;
-        enmu class eBuckSize{ BuckSize=64; }
+        size_type _mapSize;
+        enmu class eBlockSize{ BlockSize=64; }
+
 
     public:
 
         /* 构造、析构、赋值 */
-        deque():_map(nullptr), _map_size(0){}
+        deque():_map(nullptr), _mapSize(0){}
         explicit deque(size_type n, const value_type& val = value_type());
         template<typename InputIterator>
         deque(InputIterator first, InputIterator last);
@@ -134,6 +142,8 @@ namespace istl
         friend bool operator == (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
         template <typename T, typename Alloc>
         friend bool operator != (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
+
+    private:
 
 
     };
