@@ -1,12 +1,26 @@
 #ifndef _DEQUE_IMPL_H_
 #define _DEQUE_IMPL_H_
 #include <stddef.h>
+#include <algorithm>
+#include <iostream>
 #include "deque.h"
+#include "allocator.h"
 
 namespace istl
 {
     namespace it
     {
+        /* 赋值 */
+        template<typename T>
+        deque_iterator<T>& deque_iterator<T>::operator = (const deque_iterator& it){
+            if(*this != it){
+                _mapIndex = it._mapIndex;
+                _cur = it._cur;
+                _container = it._container;
+            }
+            return *this;
+        }
+
         /* 运算符重载 */
         template<typename T>
         deque_iterator<T>& deque_iterator<T>::operator ++ (){
@@ -14,7 +28,7 @@ namespace istl
                 ++_cur;
             }else if(_mapIndex + 1 < _container->_mapSize){
                 ++_mapIndex;
-                _cur = getBlockHead[_mapIndex];
+                _cur = getBlockHead(_mapIndex);
             }else{
                 _mapIndex = _container->_mapSize;
                 _cur = _container->_map[_mapIndex];
@@ -56,24 +70,27 @@ namespace istl
             if(lhs._container != rhs._container || lhs._container == nullptr || rhs._container == nullptr){
                 return 0;
             }
-            auto lhsToHead = lhs._cur - lhs.getBlockHead(lhs._mapIndex);
+            auto lhsToHead = 0;
+            if(lhs._mapIndex != lhs._container->_mapSize){
+                lhsToHead = lhs._cur - lhs.getBlockHead(lhs._mapIndex);
+            }
             auto rhsToTail = rhs.getBlockTail(rhs._mapIndex) - rhs._cur + 1;
-            auto mapIndexDiff = lhs._mapIndex - rhs._mapIndex - 1;
-            return lhsToHead + rhsToTail + mapIndexDiff;
+            auto innerBlockNum = (lhs._mapIndex - rhs._mapIndex - 1) * (lhs.getBlockSize());
+            std::cout << "lhs=" << lhsToHead << " rhs=" << rhsToTail << " inner=" << innerBlockNum<< std::endl;
+            return lhsToHead + rhsToTail + innerBlockNum;
         }
 
         template<typename T>
         deque_iterator<T> operator + (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n){
-            if(n < 0) return (it - (-n));
             deque_iterator<T> res(it);
-            auto m = res.getBlockTail(res._mapIndex) - res._cur;
+            auto m = res.getBlockTail(res._mapIndex) - res._cur + 1;
             if(n <= m){
                 res._cur += n;
             }else{
                 n -= m;
                 res._mapIndex += (n / res.getBlockSize() + 1);
                 auto ptr = res.getBlockHead(res._mapIndex);
-                auto dif = n % res.getBlockSize() - 1;
+                auto dif = (n % res.getBlockSize()) - 1;
                 res._cur = ptr + dif;
             }
             return res;
@@ -86,16 +103,15 @@ namespace istl
 
         template<typename T>
         deque_iterator<T> operator - (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n){
-            if(n < 0) return (it + (-n));
             deque_iterator<T> res(it);
-            auto m = res._res - res.getBlockHead(res._mapIndex);
+            auto m = res._cur - res.getBlockHead(res._mapIndex);
             if(n <= m){
                 res._cur -= n;
             }else{
                 n -= m;
                 res._mapIndex -= (n / res.getBlockSize() + 1);
                 auto ptr = res.getBlockTail(res._mapIndex);
-                auto dif = n % res.getBlockSize - 1;
+                auto dif = (n % res.getBlockSize()) - 1;
                 res._cur = ptr - dif;
             }
             return res;
@@ -117,8 +133,11 @@ namespace istl
             return !(*this == rhs);
         }
 
-
-
+        template<typename T>
+        void deque_iterator<T>::swap(deque_iterator<T> &it){
+            std::swap(_mapIndex, it._mapIndex);
+            std::swap(_cur, it._cur);
+        }
 
         template<typename T>
         T* deque_iterator<T>::getBlockTail(size_t mapIndex)const{
@@ -133,9 +152,221 @@ namespace istl
             return _container->getBlockSize();
         }
     } // namespace it
+
+    /* 构造、析构、赋值 */
+    template<typename T, typename Alloc>
+    deque<T, Alloc>::deque(size_type n, const value_type& val):_map(nullptr), _mapSize(0){
+        __deque(n, val, typename std::is_integral<size_type>::type());
+    }
+
+    template<typename T, typename Alloc>
+    template<typename InputIterator>
+    deque<T, Alloc>::deque(InputIterator first, InputIterator last):_map(nullptr), _mapSize(0){
+        __deque(first, last, typename std::is_integral<InputIterator>::type());
+    }
+
+    template<typename T, typename Alloc>
+    void deque<T, Alloc>::__deque(size_type n, const value_type &val, std::true_type){
+        for(size_t i=0; i<n; ++i){
+            if(i < n/2) this->push_back(val);
+            else this->push_front(val);
+        }
+    }
+
+    template<typename T, typename Alloc>
+    template<typename InputIterator>
+    void deque<T, Alloc>::__deque(InputIterator first, InputIterator last, std::false_type){
+        auto mid = (last - first)/2;
+        for(auto it = first + mid; it != first - 1; --it){
+            this->push_front(*it);
+        }
+        for(auto it = first + mid + 1; it != last; ++it){
+            this->push_back(*it);
+        }
+    }
+
+    template<typename T, typename Alloc>
+    deque<T, Alloc>::deque(const deque &other){
+        _mapSize = other._mapSize;
+        _map = getNewMap(_mapSize);
+        for(size_t i=0; i + other._start._mapIndex <= other._finish._mapIndex; ++i){
+            size_t j = 0;
+            size_t ceiling = getBlockSize();
+            if(i == 0){
+                j = other._start._cur - other._map[other._start._mapIndex];
+            }
+            if(i == other._finish._mapIndex - other._start._mapIndex){
+                ceiling = other._finish._cur - other._map[other._finish._mapIndex];
+            }
+            for(; j<ceiling; ++j){
+                _map[other._start._mapIndex + i][j] = other._map[other._start._mapIndex + i][j];
+            }
+        }
+        size_t dif = other._start._cur - other._map[_start._mapIndex];
+        size_type size = other.size();
+        auto startIndex = other._start._mapIndex;
+        _start = iterator{startIndex, _map[startIndex]+dif, this};
+        _finish = _start + size;
+    }
+
+    template<typename T, typename Alloc>
+    deque<T, Alloc>::deque(const deque &&other){
+        _start = other._start;
+        _finish = other._start;
+        _map = other._map;
+        _mapSize = other._mapSize;
+        _start._container = _finish._container = this;
+        
+        other._start = other._finish = iterator();
+        other._map = nullptr;
+        other._mapSize = 0;
+    }
+
+    template<typename T, typename Alloc>
+    deque<T, Alloc>::~deque(){
+        for(size_t i=0; i<_mapSize; ++i){
+            for(auto ptr = _map[i]; ptr != nullptr && (ptr != _map[i] + getBlockSize()); ++ptr){
+                dataAllocator::destroy(ptr);
+            }
+            if(_map[i] != nullptr){
+                dataAllocator::deallocate(_map[i], getBlockSize());
+            }
+        }
+        delete[] _map;
+    }
+
+    /* 增删改 */
+    template<typename T, typename Alloc>
+    void deque<T, Alloc>::push_back(const value_type& val){
+        if(empty()){
+            init();
+        }else if(back_full()){
+            reallocateAndMove();
+        }
+        std::cout << "val=" << val << " _finish._cur=" <<_finish._cur << std::endl;
+        dataAllocator::construct(_finish._cur, val);
+        ++_finish;
+    }
+
+    template<typename T, typename Alloc>
+    void deque<T, Alloc>::push_front(const value_type& val){
+        if(empty()){
+            init();
+        }else if(front_full()){
+            reallocateAndMove();
+        }
+        --_start;
+        dataAllocator::construct(_start._cur, val);
+    }
+
+    template<typename T, typename Alloc>
+    void deque<T, Alloc>::pop_back(){
+        --_finish;
+        dataAllocator::destroy(_finish._cur);
+    }
+
+    template<typename T, typename Alloc>
+    void deque<T, Alloc>::pop_front(){
+        dataAllocator::destroy(_start._cur);
+        ++_start;
+    }
+
+    template<typename T, typename Alloc>
+    void deque<T, Alloc>::swap(deque &x){
+        std::swap(_map, x._map);
+        std::swap(_mapSize, _mapSize);
+        _start.swap(x._start);
+        _finish.swap(x._finish);
+    }
+
+
+    template<typename T, typename Alloc>
+    void deque<T, Alloc>::clear(){
+        for(size_t i=0; i<_mapSize; ++i){
+            for(auto ptr = _map[i]; ptr != nullptr && (ptr != _map[i] + getBlockSize()); ++ptr){
+                dataAllocator::destroy(ptr);
+            }
+        }
+        _start._mapIndex = _finish._mapIndex = _mapSize/2;
+        _start._cur = _finish._cur = _map[_mapSize/2];
+    }
+
+
+    /* aux */
+    template<typename T, typename Alloc>
+    void deque<T, Alloc>::init(){
+        _mapSize = 2;
+        _map = getNewMap(_mapSize);
+        _start._container = _finish._container = this;
+        _start._mapIndex = _finish._mapIndex = _mapSize / 2;
+        _start._cur = _finish._cur = _map[_mapSize / 2];
+    }
+
+    template<typename T, typename Alloc>
+    bool deque<T, Alloc>::back_full()const{
+        return _finish._cur == _map[_mapSize];
+    }
+
+    template<typename T, typename Alloc>
+    bool deque<T, Alloc>::front_full()const{
+        return _start._cur == _map[0];
+    }
+
+
+    template<typename T, typename Alloc>
+    typename deque<T, Alloc>::pointer
+    deque<T, Alloc>::getNewBlock(){
+        return dataAllocator::allocate(getBlockSize());
+    }
+
+    template<typename T, typename Alloc>
+    typename deque<T, Alloc>::map_pointer
+    deque<T, Alloc>::getNewMap(const size_t size){
+        typename deque<T, Alloc>::map_pointer map = new T*[size];
+        for(size_t i=0; i<size; i++){
+            map[i] = getNewBlock();
+        }
+        return map;
+    }
+
+    template<typename T, typename Alloc>
+    size_t deque<T, Alloc>::getBlockSize()const{
+        return (size_t)eBlockSize::BlockSize;
+    }
+
+    template<typename T, typename Alloc>
+    size_t deque<T, Alloc>::getNewMapSize(const size_t size){
+        return (size == 0) ? 2 : size * 2;
+    }
+
+    template<typename T, typename Alloc>
+    void deque<T, Alloc>::reallocateAndMove(){
+        size_t newSize = getNewMapSize(_mapSize);
+        deque<T, Alloc>::map_pointer newMap = getNewMap(newSize);
+        size_t startIndex = newSize / 4;
+        for(size_t i=0; i + _start._mapIndex < _finish._mapIndex; ++i){
+            size_t j = 0;
+            size_t celling = getBlockSize();
+            if(i == 0){
+                j = _start._cur - _map[_start._mapIndex];
+            }
+            if(i == _finish._mapIndex - _start._mapIndex){
+                celling = _finish._cur - _map[_finish._mapIndex];
+            }
+            for(; j < celling; ++j){
+                newMap[startIndex + i][j] = {std::move(_map[_start._mapIndex + i][j])};
+            }
+        }
+        size_t dif = _start._cur - _map[_start._mapIndex];
+        size_type size = this->size();
+        std::cout << "size: " <<size <<std::endl;
+        _mapSize = newSize;
+        _map = newMap;
+        _start = iterator{startIndex, _map[startIndex]+dif, this};
+        _finish = _start + size;
+    }
+
     
-
-
 
 } // namespace istl
 

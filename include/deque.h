@@ -3,6 +3,7 @@
 
 #include "allocator.h"
 #include "iterator.h"
+#include <iostream>
 
 namespace istl
 {
@@ -10,14 +11,25 @@ namespace istl
     class deque;
     namespace it
     {
+        template<typename T> class deque_iterator;
+        /* 友元函数前向声明 */
+        template<typename T>typename deque_iterator<T>::difference_type operator - (const deque_iterator<T>& lhs, const deque_iterator<T>& rhs);
+        template<typename T> deque_iterator<T> operator + (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
+        template<typename T> deque_iterator<T> operator + (typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
+        template<typename T> deque_iterator<T> operator - (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
+        template<typename T> deque_iterator<T> operator - (typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
+
         template<typename T>
         class deque_iterator : public iterator<bidirectional_iterator_tag, T>
         {
         public:
-            typedef T*   pointer;
+            typedef T*          pointer;
+            typedef const T*    const_pointer;
+            typedef T&          reference;
+            typedef const T&    const_reference;
+
         private:
-            template<typename T, typename Alloc>
-            friend class ::istl::deque;
+            friend class ::istl::deque<T>;
             typedef const ::istl::deque<T>* containerPtr;
         
         private:
@@ -37,28 +49,24 @@ namespace istl
             deque_iterator operator ++ (int);
             deque_iterator& operator -- ();
             deque_iterator operator -- (int);
-            reference operator *() { return *cur_; }
-            const reference operator *()const { return *cur_; }
+            reference operator *() { return *_cur; }
+            const_reference operator *()const { return *_cur; }
             pointer operator ->() { return &(operator*()); }
-            const pointer operator ->()const { return &(operator*()); }
+            const_pointer operator ->()const { return &(operator*()); }
 
             /* 比较运算 */
             bool operator ==(const deque_iterator& rhs)const;
             bool operator !=(const deque_iterator& rhs)const;
         
         public:
-            template<typename T>
-            friend typename deque_iterator<T>::difference_type operator - (const deque_iterator<T>& lhs, const deque_iterator<T>& rhs);
-            template<typename T>
-            friend deque_iterator<T> operator + (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
-            template<typename T>
-            friend deque_iterator<T> operator + (typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
-            template<typename T>
-            friend deque_iterator<T> operator - (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
-            template<typename T>
-            friend deque_iterator<T> operator - (typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
-            template<typename T>
-            friend void swap(deque_iterator<T> &lhs, deque_iterator<T> &rhs);
+
+            friend typename deque_iterator<T>::difference_type operator - <>(const deque_iterator<T>& lhs, const deque_iterator<T>& rhs);
+            friend deque_iterator<T> operator + <>(const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
+            friend deque_iterator<T> operator + <>(typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
+            friend deque_iterator<T> operator - <>(const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n);
+            friend deque_iterator<T> operator - <>(typename deque_iterator<T>::difference_type n, const deque_iterator<T> &it);
+            
+            void swap(deque_iterator<T> &it);
 
         private:
             T* getBlockTail(size_t mapIndex)const;
@@ -75,19 +83,18 @@ namespace istl
     class deque
     {
     public:
-        typedef T                                   value_type;
-        typedef T*                                  pointer;
-        typedef it::deque_iterator<T>               iterator;
-        typedef it::deque_iterator<const T>         const_iterator;
-        typedef T&                                  reference;
-        typedef const T&                            const_reference;
-        typedef size_t                              size_type;
-        typedef ptrdiff_t                           difference_type;
-        typedef Alloc                               allocator_type;
+        typedef T                                           value_type;
+        typedef T*                                          pointer;
+        typedef ::istl::it::deque_iterator<T>               iterator;
+        typedef ::istl::it::deque_iterator<const T>         const_iterator;
+        typedef T&                                          reference;
+        typedef const T&                                    const_reference;
+        typedef size_t                                      size_type;
+        typedef ptrdiff_t                                   difference_type;
+        typedef Alloc                                       allocator_type;
     
     private:
-        template<typename T>
-        friend class ::istl::it::deque_iterator;
+        friend class ::istl::it::deque_iterator<T>;
         
         typedef Alloc                               dataAllocator;
         typedef allocator<T*>                       mapAllocator;
@@ -98,19 +105,26 @@ namespace istl
         iterator _finish;
         map_pointer _map;
         size_type _mapSize;
-        enmu class eBlockSize{ BlockSize=64; }
+        enum class eBlockSize{ BlockSize=8 };
 
 
     public:
 
         /* 构造、析构、赋值 */
         deque():_map(nullptr), _mapSize(0){}
-        explicit deque(size_type n, const value_type& val = value_type());
+        deque(size_type n, const value_type &val = value_type());
         template<typename InputIterator>
         deque(InputIterator first, InputIterator last);
         deque(const deque &other);
+        deque(const deque &&other);
         ~deque();
-        
+    
+    private:
+        void __deque(size_type n, const value_type &val, std::true_type);
+        template<typename InputIterator>
+        void __deque(InputIterator first, InputIterator last, std::false_type);
+
+    public:
         /* 迭代器相关 */
         iterator begin(){ return _start; }
         iterator end() { return _finish; }
@@ -118,12 +132,16 @@ namespace istl
         iterator end() const { return _finish; }
 
         /* 元素访问 */
-        reference front();
-        reference back();
-        reference front()const;
-        reference back()const;
-        reference operator[] (size_type n);
-        reference operator[](size_type n)const;
+        reference front(){ return *begin(); }
+        reference back(){ return *(end()-1); }
+        const_reference front()const{ *begin(); }
+        const_reference back()const{ return *(end()-1); }
+        reference operator[] (size_type n){ 
+            // std::cout << "in []: begin = " << _start._cur << " n = " << n << std::endl;
+            // std::cout << " begin()+n=" << (_start+n)._cur << std::endl;
+            // std::cout << " end()=" << _finish._cur << " val=" << *(_start+n) << std::endl; 
+            return *(begin()+n); }
+        const_reference operator[](size_type n)const{ return *(begin()+n); };
 
         /* 增删改 */
         void push_back(const value_type& val);
@@ -138,17 +156,22 @@ namespace istl
         bool empty() const{ return begin() == end(); }
 
         /* 容器比较 */
-        template <typename T, typename Alloc>
-        friend bool operator == (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
-        template <typename T, typename Alloc>
-        friend bool operator != (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
+        // friend bool operator == (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
+        // friend bool operator != (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
 
     private:
-
+        void init();
+        bool back_full()const;
+        bool front_full()const;
+        pointer getNewBlock();
+        map_pointer getNewMap(const size_t size);
+        size_t getBlockSize()const;
+        size_t getNewMapSize(const size_t size);
+        void reallocateAndMove();
 
     };
 } // namespace istl
 
 
-
+#include "deque.impl.h"
 #endif

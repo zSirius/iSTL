@@ -74,6 +74,10 @@
         "map": "cpp",
         "set": "cpp",
         "unordered_set": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "version": "cpp",
+        "any": "cpp",
+        "condition_variable": "cpp",
+        "iomanip": "cpp"
     }
 }

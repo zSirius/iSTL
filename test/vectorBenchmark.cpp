@@ -6,8 +6,8 @@
 using namespace std;
 using namespace chrono;
 
-const int numTests = 1;
-const size_t testSize = 100000;
+const int numTests = 100;
+const size_t testSize = 1000000;
 
 #define MEASURE_TIME(operation, duration) \
     start = high_resolution_clock::now(); \
