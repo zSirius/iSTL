@@ -12,9 +12,6 @@
                 "${workspaceFolder}/src/*.cpp",
                 "-I",
                 "${workspaceFolder}/include",
-                "-lgtest",
-                "-lgtest_main",
-                "-pthread",
                 "-o",
                 "${workspaceFolder}/test/test"
             ],

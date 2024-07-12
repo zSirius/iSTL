@@ -6,7 +6,7 @@
 using namespace std;
 using namespace chrono;
 
-static const int numTests = 100;
+static const int numTests = 20;
 static const size_t testSize = 1000000;
 
 #define MEASURE_TIME(operation, duration) \

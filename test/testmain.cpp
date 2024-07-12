@@ -1,9 +1,9 @@
 #include <iostream>
 #include "deque.h"
-//void vectorBenchmark();
+void vectorBenchmark();
 void dequeBenchmark();
 int main(){
-    //vectorBenchmark();
+    vectorBenchmark();
     dequeBenchmark();
     // istl::deque<int> istl_deq;
     // int n = 1000000;

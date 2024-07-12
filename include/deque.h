@@ -95,6 +95,8 @@ namespace istl
     
     private:
         friend class ::istl::it::deque_iterator<T>;
+        friend class ::istl::it::deque_iterator<const T>;
+        friend typename iterator::difference_type it::operator - <>(const iterator& lhs, const iterator& rhs);
         
         typedef Alloc                               dataAllocator;
         typedef allocator<T*>                       mapAllocator;
