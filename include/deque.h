@@ -105,7 +105,7 @@ namespace istl
         iterator _finish;
         map_pointer _map;
         size_type _mapSize;
-        enum class eBlockSize{ BlockSize=8 };
+        enum class eBlockSize{ BlockSize=64 };
 
 
     public:
@@ -136,11 +136,12 @@ namespace istl
         reference back(){ return *(end()-1); }
         const_reference front()const{ *begin(); }
         const_reference back()const{ return *(end()-1); }
-        reference operator[] (size_type n){ 
-            // std::cout << "in []: begin = " << _start._cur << " n = " << n << std::endl;
-            // std::cout << " begin()+n=" << (_start+n)._cur << std::endl;
-            // std::cout << " end()=" << _finish._cur << " val=" << *(_start+n) << std::endl; 
-            return *(begin()+n); }
+        // reference operator[] (size_type n){ 
+        //     std::cout << "in []: begin = " << _start._cur << " n = " << n << std::endl;
+        //     std::cout << " begin()+n=" << (_start+n)._cur << std::endl;
+        //     std::cout << " end()=" << _finish._cur << " val=" << *(_start+n) << std::endl; 
+        //     return *(begin()+n); }
+        reference operator[] (size_type n){ return *(begin()+n); }
         const_reference operator[](size_type n)const{ return *(begin()+n); };
 
         /* 增删改 */

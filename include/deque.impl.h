@@ -30,8 +30,9 @@ namespace istl
                 ++_mapIndex;
                 _cur = getBlockHead(_mapIndex);
             }else{
+                // reach end()
                 _mapIndex = _container->_mapSize;
-                _cur = _container->_map[_mapIndex];
+                _cur = (_container->_map[_mapIndex-1])+1;
             }
             return *this;
         }
@@ -76,21 +77,22 @@ namespace istl
             }
             auto rhsToTail = rhs.getBlockTail(rhs._mapIndex) - rhs._cur + 1;
             auto innerBlockNum = (lhs._mapIndex - rhs._mapIndex - 1) * (lhs.getBlockSize());
-            std::cout << "lhs=" << lhsToHead << " rhs=" << rhsToTail << " inner=" << innerBlockNum<< std::endl;
+            //std::cout << "lhs=" << lhsToHead << " rhs=" << rhsToTail << " inner=" << innerBlockNum<< std::endl;
             return lhsToHead + rhsToTail + innerBlockNum;
         }
 
         template<typename T>
         deque_iterator<T> operator + (const deque_iterator<T> &it, typename deque_iterator<T>::difference_type n){
             deque_iterator<T> res(it);
-            auto m = res.getBlockTail(res._mapIndex) - res._cur + 1;
+            // m: 该桶中后续还有多少个元素
+            auto m = res.getBlockTail(res._mapIndex) - res._cur;
             if(n <= m){
                 res._cur += n;
             }else{
-                n -= m;
+                n -= (m+1); // it初始所在桶全部元素, +1表示加上it所指元素本身
                 res._mapIndex += (n / res.getBlockSize() + 1);
                 auto ptr = res.getBlockHead(res._mapIndex);
-                auto dif = (n % res.getBlockSize()) - 1;
+                auto dif = (n % res.getBlockSize());
                 res._cur = ptr + dif;
             }
             return res;
@@ -189,24 +191,33 @@ namespace istl
     deque<T, Alloc>::deque(const deque &other){
         _mapSize = other._mapSize;
         _map = getNewMap(_mapSize);
-        for(size_t i=0; i + other._start._mapIndex <= other._finish._mapIndex; ++i){
+        size_t startIndex = other._start._mapIndex;
+        size_t finishIndex = other._finish._mapIndex;
+        for(size_t i=0; i + startIndex <= finishIndex; ++i){
             size_t j = 0;
             size_t ceiling = getBlockSize();
             if(i == 0){
+                // start offset
                 j = other._start._cur - other._map[other._start._mapIndex];
             }
-            if(i == other._finish._mapIndex - other._start._mapIndex){
-                ceiling = other._finish._cur - other._map[other._finish._mapIndex];
+            if(i == finishIndex - startIndex){
+                if(other.back_full()) ceiling = 0;
+                else ceiling = other._finish._cur - other._map[other._finish._mapIndex];
             }
             for(; j<ceiling; ++j){
-                _map[other._start._mapIndex + i][j] = other._map[other._start._mapIndex + i][j];
+                _map[startIndex + i][j] = other._map[startIndex + i][j];
             }
         }
-        size_t dif = other._start._cur - other._map[_start._mapIndex];
+        
+        size_t start_offset = other._start._cur - other._map[other._start._mapIndex];
         size_type size = other.size();
-        auto startIndex = other._start._mapIndex;
-        _start = iterator{startIndex, _map[startIndex]+dif, this};
-        _finish = _start + size;
+        _start = iterator{startIndex, _map[startIndex]+start_offset, this};
+        
+        size_t finish_offset = 0;
+        if(!other.back_full()){
+            finish_offset = other._finish._cur - other._map[_finish._mapIndex];
+        }
+        _finish = iterator{finishIndex, _map[finishIndex]+finish_offset, this};
     }
 
     template<typename T, typename Alloc>
@@ -243,7 +254,7 @@ namespace istl
         }else if(back_full()){
             reallocateAndMove();
         }
-        std::cout << "val=" << val << " _finish._cur=" <<_finish._cur << std::endl;
+        //std::cout << "val=" << val << "_finish_mapIndex = " << _finish._mapIndex<< " _finish._cur=" <<_finish._cur << std::endl;
         dataAllocator::construct(_finish._cur, val);
         ++_finish;
     }
@@ -282,6 +293,7 @@ namespace istl
 
     template<typename T, typename Alloc>
     void deque<T, Alloc>::clear(){
+        if(_map == nullptr) return;
         for(size_t i=0; i<_mapSize; ++i){
             for(auto ptr = _map[i]; ptr != nullptr && (ptr != _map[i] + getBlockSize()); ++ptr){
                 dataAllocator::destroy(ptr);
@@ -304,7 +316,7 @@ namespace istl
 
     template<typename T, typename Alloc>
     bool deque<T, Alloc>::back_full()const{
-        return _finish._cur == _map[_mapSize];
+        return _finish._mapIndex == _finish._container->_mapSize;
     }
 
     template<typename T, typename Alloc>
@@ -344,22 +356,24 @@ namespace istl
         size_t newSize = getNewMapSize(_mapSize);
         deque<T, Alloc>::map_pointer newMap = getNewMap(newSize);
         size_t startIndex = newSize / 4;
-        for(size_t i=0; i + _start._mapIndex < _finish._mapIndex; ++i){
+        for(size_t i=0; i + _start._mapIndex <= _finish._mapIndex; ++i){
             size_t j = 0;
-            size_t celling = getBlockSize();
+            size_t ceiling = getBlockSize();
             if(i == 0){
                 j = _start._cur - _map[_start._mapIndex];
             }
             if(i == _finish._mapIndex - _start._mapIndex){
-                celling = _finish._cur - _map[_finish._mapIndex];
+                //if _finish in _map[_mapSize], ceiling = 0
+                if(back_full()) ceiling = 0;
+                else ceiling = _finish._cur - _map[_finish._mapIndex];
             }
-            for(; j < celling; ++j){
+            for(; j < ceiling; ++j){
                 newMap[startIndex + i][j] = {std::move(_map[_start._mapIndex + i][j])};
             }
         }
         size_t dif = _start._cur - _map[_start._mapIndex];
         size_type size = this->size();
-        std::cout << "size: " <<size <<std::endl;
+        //std::cout << "size: " <<size <<std::endl;
         _mapSize = newSize;
         _map = newMap;
         _start = iterator{startIndex, _map[startIndex]+dif, this};
