@@ -1,5 +1,5 @@
-#ifndef _UNINITIALIZED_H_
-#define _UNINITIALIZED_H_
+#ifndef _ISTL_UNINITIALIZED_H_
+#define _ISTL_UNINITIALIZED_H_
 
 #include <type_traits>
 #include <cstring>

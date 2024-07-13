@@ -1,5 +1,5 @@
-#ifndef _VECTOR_IMPL_H_
-#define _VECTOR_IMPL_H_
+#ifndef _ISTL_VECTOR_IMPL_H_
+#define _ISTL_VECTOR_IMPL_H_
 #include "vector.h"
 #include "uninitialized.h"
 #include <algorithm>

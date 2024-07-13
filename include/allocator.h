@@ -1,5 +1,5 @@
-#ifndef _ALLOCATOR_H_
-#define _ALLOCATOR_H_
+#ifndef _ISTL_ALLOCATOR_H_
+#define _ISTL_ALLOCATOR_H_
 
 #include "alloc.h"
 

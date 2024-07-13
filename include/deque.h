@@ -1,5 +1,5 @@
-#ifndef _DEQUE_H_
-#define _DEQUE_H_
+#ifndef _ISTL_DEQUE_H_
+#define _ISTL_DEQUE_H_
 
 #include "allocator.h"
 #include "iterator.h"

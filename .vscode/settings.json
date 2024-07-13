@@ -78,6 +78,7 @@
         "version": "cpp",
         "any": "cpp",
         "condition_variable": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "chrono": "cpp"
     }
 }

@@ -1,5 +1,5 @@
-#ifndef _DEQUE_IMPL_H_
-#define _DEQUE_IMPL_H_
+#ifndef _ISTL_DEQUE_IMPL_H_
+#define _ISTL_DEQUE_IMPL_H_
 #include <stddef.h>
 #include <algorithm>
 #include <iostream>

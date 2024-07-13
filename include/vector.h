@@ -1,5 +1,5 @@
-#ifndef _VECTOR_H_
-#define _VECTOR_H_
+#ifndef _ISTL_VECTOR_H_
+#define _ISTL_VECTOR_H_
 
 #include<stddef.h>
 #include<assert.h>

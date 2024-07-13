@@ -1,5 +1,5 @@
-#ifndef _REVERSE_ITERATOR_H_
-#define _REVERSE_ITERATOR_H_
+#ifndef _ISTL_REVERSE_ITERATOR_H_
+#define _ISTL_REVERSE_ITERATOR_H_
 #include "iterator.h"
 
 namespace istl

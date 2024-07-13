@@ -1,5 +1,5 @@
-#ifndef _ITERATOR_H_
-#define _ITERATOR_H_
+#ifndef _ISTL_ITERATOR_H_
+#define _ISTL_ITERATOR_H_
 
 #include <cstddef>
 
