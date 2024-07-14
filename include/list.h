@@ -57,6 +57,7 @@ namespace istl
             list_iterator(const list_iterator& other) = default;
             list_iterator& operator = (const list_iterator& other) = default;
 
+
             /* 运算符重载 */
             list_iterator& operator ++ ();
             list_iterator operator ++ (int);
@@ -84,7 +85,8 @@ namespace istl
     public:
         typedef T value_type;
         typedef it::list_iterator<T> iterator;
-        typedef it::list_iterator<const T> const_iterator;
+        //typedef it::list_iterator<const T> const_iterator;
+        typedef it::list_iterator<T> const_iterator; // to fix bug
         typedef reverse_iterator_t<iterator> reverse_iterator;
         typedef T& reference;
         typedef const T& const_reference;
@@ -121,8 +123,8 @@ namespace istl
 
         iterator begin(){ return _head; }
         iterator end() { return _tail; }
-        const_iterator begin()const{ return _head; }
-        const_iterator end()const{return _tail;}
+        const_iterator cbegin()const{ return _head; }
+        const_iterator cend()const{return _tail;}
         reverse_iterator rbegin(){ return reverse_iterator(_head); }
         reverse_iterator rend(){ return reverse_iterator(_tail); }
 
@@ -141,34 +143,37 @@ namespace istl
 
 
     public:
-        // void swap(list& other);
-        // void clear();
+        void swap(list& other);
+        void clear();
 
         void splice(const_iterator pos, list& other);
         void splice(const_iterator pos, list& other, const_iterator it);
         void splice(const_iterator pos, list& other, const_iterator first, const_iterator last);
 
-        // void remove(const value_type& val);
-        // template <typename Predicate>
-        // void remove_if(Predicate pred);
+        void remove(const value_type& val);
+        template <typename Predicate>
+        void remove_if(Predicate pred);
         
-        // void unique();
-        // template <typename BinaryPredicate>
-        // void unique(BinaryPredicate binary_pred);
+        void unique();
+        template <typename BinaryPredicate>
+        void unique(BinaryPredicate binary_pred);
         
-        // void merge(list& x);
-        // template <typename Compare>
-        // void merge(list& x, Compare comp);
+        void merge(list& other);
+        template <typename Compare>
+        void merge(list& other, Compare comp);
         
-        // void sort();
-        // template <typename Compare>
-        // void sort(Compare comp);
+        void sort();
+        template <typename Compare>
+        void sort(Compare comp);
         
-        // void reverse();
+        void reverse();
     
     private:
         nodePtr newNode(const value_type& val = value_type(), nodePtr prev = nullptr, nodePtr next = nullptr);
         void deleteNode(nodePtr ptr);
+        //used to merge sort and merge
+        template <typename Compare>
+        nodePtr merge(nodePtr head1, nodePtr head2, Compare comp);
 
     };
     
