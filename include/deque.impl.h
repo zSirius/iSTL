@@ -135,6 +135,7 @@ namespace istl
             return !(*this == rhs);
         }
 
+
         template<typename T>
         void deque_iterator<T>::swap(deque_iterator<T> &it){
             std::swap(_mapIndex, it._mapIndex);
@@ -302,6 +303,22 @@ namespace istl
         _start._mapIndex = _finish._mapIndex = _mapSize/2;
         _start._cur = _finish._cur = _map[_mapSize/2];
     }
+
+        /* 友元容器比较 */
+        template<typename T, typename Alloc> 
+        bool operator == (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs){
+            auto it1 = lhs.begin(), it2 = rhs.begin();
+            for(; it1 != lhs.end() && it2 != rhs.end(); ++it1, ++it2){
+                if((*it1) != (*it2)) return false;
+            }
+            if(it1 == lhs.end() && it2 == rhs.end()) return true;
+            return false;
+        }
+        
+        template<typename T, typename Alloc> 
+        bool operator != (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs){
+            return !(lhs == rhs);
+        }
 
 
     /* aux */

@@ -9,6 +9,8 @@ namespace istl
 {
     template<typename T, typename Alloc = istl::allocator<T> >
     class deque;
+    template<typename T, typename Alloc> bool operator == (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
+    template<typename T, typename Alloc> bool operator != (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
     namespace it
     {
         template<typename T> class deque_iterator;
@@ -159,8 +161,8 @@ namespace istl
         bool empty() const{ return begin() == end(); }
 
         /* 容器比较 */
-        // friend bool operator == (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
-        // friend bool operator != (const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
+        friend bool operator == <>(const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
+        friend bool operator != <>(const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs);
 
     private:
         void init();

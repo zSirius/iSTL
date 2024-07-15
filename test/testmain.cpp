@@ -3,13 +3,14 @@
 #include <ctime>  // 包含时间函数，用于种子生成
 #include "list.h"
 #include "deque.h"
+#include "stack.h"
 
 
 
 
-void vectorBenchmark();
-void dequeBenchmark();
-void listBenchmark();
+// void vectorBenchmark();
+// void dequeBenchmark();
+// void listBenchmark();
 
 using namespace std;
 
@@ -28,7 +29,7 @@ using namespace std;
 int main(){
     //vectorBenchmark();
     //dequeBenchmark();
-    listBenchmark();
+    // listBenchmark();
     
     // 使用时间作为随机数种子
     //std::mt19937 rng(static_cast<unsigned int>(std::time(0))); // 随机数引擎
@@ -71,6 +72,25 @@ int main(){
     // for(auto it = l2.begin(); it != l2.end(); ++it) cout << *it << endl;
 
     // cout << "size l1 =" << l1.size() << " l2=" << l2.size();
+
+    istl::stack<int> stk, stk2;
+    stk.push(1);
+    stk.push(2);
+    cout << stk.top() << endl;
+    stk.push(3);
+    
+    stk.pop();
+    stk.pop();
+    
+    
+    stk2.push(1);
+    stk2.push(2);
+    cout << "size=" << stk.size() << " size2=" << stk2.size() << endl;
+    cout << stk.top() << endl;
+    cout << stk2.top() << endl;
+    cout << (stk == stk2) << endl; 
+
+    swap(stk, stk2);
 
 
     return 0;
