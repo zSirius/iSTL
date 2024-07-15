@@ -5,6 +5,7 @@
 #include "iterator.h"
 #include "ReverseIterator.h"
 #include "uninitialized.h"
+#include <initializer_list>
 
 /**********************************************************
  *     begin()    last valid node                         *
@@ -60,7 +61,7 @@ namespace istl
             nodePtr _ptr;
 
             list_iterator(nodePtr ptr = nullptr) : _ptr(ptr){}
-            list_iterator(const list_iterator& other) = default;
+            list_iterator(const iterator& other) : _ptr(other._ptr){}
             list_iterator& operator = (const list_iterator& other) = default;
 
 
@@ -108,6 +109,7 @@ namespace istl
         template<typename InputIterator>
         list(InputIterator first, InputIterator last);
         list(const list& other);
+        list(std::initializer_list<T> init);
         list& operator = (const list& other);
         ~list();
     

@@ -106,6 +106,19 @@ namespace istl
     }
 
     template<typename T, typename Alloc>
+    list<T, Alloc>::list(std::initializer_list<T> init){
+        nodePtr node = newNode();
+        node->_next = node;
+        node->_prev = node;
+
+        _head._ptr = node;
+        _tail._ptr = node;
+
+        for(const T& value : init){
+            push_back(value);
+        }
+    }
+    template<typename T, typename Alloc>
     list<T, Alloc>::~list(){
         iterator it = _head;
         while(it != _tail){
@@ -304,10 +317,12 @@ namespace istl
 
     template<typename T, typename Alloc>
     void list<T, Alloc>::remove(const value_type& val){
-        iterator it = begin();
-        while(it != end()){
+        iterator it = _head;
+        while(it != _tail){
             if((*it) == val){
                 erase(it++);
+            }else{
+                ++it;
             }
         }
     }
