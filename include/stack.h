@@ -12,7 +12,7 @@ namespace istl
     template <typename T, typename Container>
     bool operator!= (const stack<T, Container>& lhs, const stack<T, Container>& rhs);
     // template <typename T, typename Container>
-	// void swap(stack<T, Container>& x, stack<T, Container>& y);
+    // void swap(stack<T, Container>& x, stack<T, Container>& y);
 
     /* https://en.cppreference.com/w/cpp/container/stack */
     template<typename T, typename Container>
@@ -56,7 +56,7 @@ namespace istl
         return lhs._container != rhs._container;
     }
     // template <typename T, typename Container>
-	// void swap(stack<T, Container>& x, stack<T, Container>& y){
+    // void swap(stack<T, Container>& x, stack<T, Container>& y){
     //     x.swap(y);
     // }
 

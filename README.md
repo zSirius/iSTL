@@ -4,7 +4,12 @@
 
 预计实现空间配置起、容器、适配器、迭代器以及部分算法。
 
-目前已实现：空间配置器allocator，容器vector、deuqe、list及其迭代器，迭代器适配器Reverse_iterator，uninitialized族初始化函数
+目前已实现：
+- 空间配置器allocator
+- 容器vector、deuqe、list及其迭代器
+- 容器适配器stack、queue
+- 迭代器适配器Reverse_iterator
+- uninitialized族初始化函数
 
 
 

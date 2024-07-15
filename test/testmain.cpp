@@ -4,6 +4,7 @@
 #include "list.h"
 #include "deque.h"
 #include "stack.h"
+#include "queue.h"
 
 
 
@@ -73,24 +74,22 @@ int main(){
 
     // cout << "size l1 =" << l1.size() << " l2=" << l2.size();
 
-    istl::stack<int> stk, stk2;
+    istl::queue<int> stk, stk2;
     stk.push(1);
     stk.push(2);
-    cout << stk.top() << endl;
+    cout << stk.front() << endl;
+    cout << stk.back() << endl;
     stk.push(3);
     
     stk.pop();
     stk.pop();
+    cout << stk.back() << endl;
     
     
-    stk2.push(1);
-    stk2.push(2);
+    stk2.push(3);
     cout << "size=" << stk.size() << " size2=" << stk2.size() << endl;
-    cout << stk.top() << endl;
-    cout << stk2.top() << endl;
     cout << (stk == stk2) << endl; 
 
-    swap(stk, stk2);
 
 
     return 0;
