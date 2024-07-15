@@ -26,8 +26,8 @@ using namespace std;
 // }
 
 int main(){
-    vectorBenchmark();
-    dequeBenchmark();
+    //vectorBenchmark();
+    //dequeBenchmark();
     listBenchmark();
     
     // 使用时间作为随机数种子
