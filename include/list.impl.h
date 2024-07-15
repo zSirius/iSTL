@@ -7,39 +7,39 @@ namespace istl
 {
     namespace it
     {
-        template<typename T>
-        list_iterator<T>& list_iterator<T>::operator ++ (){
+        template<typename T, typename Ref, typename Ptr>
+        list_iterator<T, Ref, Ptr>& list_iterator<T, Ref, Ptr>::operator ++ (){
             if(_ptr != nullptr) _ptr = _ptr->_next;
             return *this;
         }
 
-        template<typename T>
-        list_iterator<T> list_iterator<T>::operator ++ (int){
-            list_iterator<T> res = *this;
+        template<typename T, typename Ref, typename Ptr>
+        list_iterator<T, Ref, Ptr> list_iterator<T, Ref, Ptr>::operator ++ (int){
+            list_iterator<T, Ref, Ptr> res = *this;
             ++(*this);
             return res;
         }
 
-        template<typename T>
-        list_iterator<T>& list_iterator<T>::operator -- (){
+        template<typename T, typename Ref, typename Ptr>
+        list_iterator<T, Ref, Ptr>& list_iterator<T, Ref, Ptr>::operator -- (){
             if(_ptr != nullptr) _ptr = _ptr->_prev;
             return *this;
         }
 
-        template<typename T>
-        list_iterator<T> list_iterator<T>::operator -- (int){
-            list_iterator<T> res = *this;
+        template<typename T, typename Ref, typename Ptr>
+        list_iterator<T, Ref, Ptr> list_iterator<T, Ref, Ptr>::operator -- (int){
+            list_iterator<T, Ref, Ptr> res = *this;
             --(*this);
             return res;
         }
 
-        template<typename T>
-        bool list_iterator<T>::operator ==(const list_iterator<T>& rhs)const{
+        template<typename T, typename Ref, typename Ptr>
+        bool list_iterator<T, Ref, Ptr>::operator ==(const list_iterator<T, Ref, Ptr>& rhs)const{
             return _ptr == rhs._ptr;
         }
 
-        template<typename T>
-        bool list_iterator<T>::operator !=(const list_iterator<T>& rhs)const{
+        template<typename T, typename Ref, typename Ptr>
+        bool list_iterator<T, Ref, Ptr>::operator !=(const list_iterator<T, Ref, Ptr>& rhs)const{
             return !(_ptr == rhs._ptr);
         }
     } // namespace it
@@ -228,7 +228,7 @@ namespace istl
 
     template<typename T, typename Alloc>
     void list<T, Alloc>::splice(const_iterator pos, list& other){
-        splice(pos, other, other.begin(), other.end());
+        splice(pos, other, other.cbegin(), other.cend());
     }
 
     template<typename T, typename Alloc>
@@ -256,7 +256,7 @@ namespace istl
 
     template<typename T, typename Alloc>
     void list<T, Alloc>::splice(const_iterator pos, list& other, const_iterator first, const_iterator last){
-        iterator it = first;
+        const_iterator it = first;
         while(it != last){
             splice(pos, other, it++);
         }

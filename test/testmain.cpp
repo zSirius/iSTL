@@ -33,11 +33,11 @@ int main(){
 
     istl::list<int> l1, l2;
     // 生成50个随机数
-    // for (int i = 0; i <10; ++i) {
-    //     int random_number = dist(rng);
-    //     l1.push_back(random_number);
-    //     //l1.push_back(i);
-    // }
+    for (int i = 0; i <10; ++i) {
+        int random_number = dist(rng);
+        l1.push_back(random_number);
+        //l1.push_back(i);
+    }
 
     for (int i = 0; i <10; ++i) {
         int random_number = dist(rng);
@@ -48,15 +48,20 @@ int main(){
     // for(auto it = l1.begin(); it != l1.end(); ++it) cout << *it << endl;
     // cout << endl;
 
-    l2.sort();
-    l1.merge(l2);
+    // l2.sort();
+    // l1.merge(l2);
+
+    //l1.cbegin();
+    l1.splice(l1.cbegin(), l2);
     
     // l1.merge(l2);
-    for(auto it = l1.begin(); it != l1.end(); ++it) cout << *it << endl;
+    for(auto it = l1.cbegin(); it != l1.cend(); ++it) {
+        cout << *it << endl;
+    }
     cout << endl;
     // for(auto it = l2.begin(); it != l2.end(); ++it) cout << *it << endl;
 
-    cout << "size l1 =" << l1.size() << " l2=" << l2.size();
+    // cout << "size l1 =" << l1.size() << " l2=" << l2.size();
 
 
     return 0;

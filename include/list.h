@@ -44,9 +44,15 @@ namespace istl
             }
         };
         
-        template<typename T>
+        template<typename T, typename Ref, typename Ptr>
         class list_iterator : public iterator<bidirectional_iterator_tag, T>
         {
+        public:
+            typedef list_iterator<T, T&, T*>                iterator;
+            typedef list_iterator<T, const T&, const T*>    const_iterator;
+            typedef Ref                                     reference;
+            typedef Ptr                                     pointer;
+
         private:
             friend class istl::list<T>;
         public:
@@ -59,12 +65,13 @@ namespace istl
 
 
             /* 运算符重载 */
+            /* 注意不能是const类型 */
             list_iterator& operator ++ ();
             list_iterator operator ++ (int);
             list_iterator& operator -- ();
             list_iterator operator -- (int);
-            T& operator * (){ return _ptr->_data; }
-            T* operator -> (){ return &(operator*()); }
+            reference operator * (){ return _ptr->_data; }
+            pointer operator -> (){ return &(operator*()); }
             
             /* 比较运算 */
             bool operator ==(const list_iterator& rhs)const;
@@ -76,17 +83,16 @@ namespace istl
     class list
     {
     private:
-        friend ::istl::it::list_iterator<T>;
-        friend ::istl::it::list_iterator<const T>;
+        friend ::istl::it::list_iterator<T, T&, T*>;
+        friend ::istl::it::list_iterator<T, const T&, const T*>;
 
         typedef Alloc nodeAllocator;
         typedef it::node<T>*  nodePtr;
 
     public:
         typedef T value_type;
-        typedef it::list_iterator<T> iterator;
-        //typedef it::list_iterator<const T> const_iterator;
-        typedef it::list_iterator<T> const_iterator; // to fix bug
+        typedef it::list_iterator<T, T&, T*> iterator;
+        typedef it::list_iterator<T, const T&, const T*> const_iterator;
         typedef reverse_iterator_t<iterator> reverse_iterator;
         typedef T& reference;
         typedef const T& const_reference;
@@ -123,8 +129,8 @@ namespace istl
 
         iterator begin(){ return _head; }
         iterator end() { return _tail; }
-        const_iterator cbegin()const{ return _head; }
-        const_iterator cend()const{return _tail;}
+        const_iterator cbegin()const{ return const_iterator(_head._ptr); }
+        const_iterator cend()const{return const_iterator(_tail._ptr);}
         reverse_iterator rbegin(){ return reverse_iterator(_head); }
         reverse_iterator rend(){ return reverse_iterator(_tail); }
 
