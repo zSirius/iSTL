@@ -280,6 +280,7 @@ namespace istl
 
     template<typename T, typename Alloc>
     typename vector<T, Alloc>::size_type vector<T, Alloc>::getNewCapacity(size_type len)const{
+        //可以在这里修改内存扩张策略
         size_type oldCapacity = _endOfStorage - _start;
         auto res = std::max(oldCapacity, len);
         size_type newCapacity = (oldCapacity != 0 ? (oldCapacity + res) : len);
