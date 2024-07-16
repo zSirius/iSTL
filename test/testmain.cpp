@@ -74,21 +74,17 @@ int main(){
 
     // cout << "size l1 =" << l1.size() << " l2=" << l2.size();
 
-    istl::queue<int> stk, stk2;
+    istl::stack<int> stk, stk2;
     stk.push(1);
-    stk.push(2);
-    cout << stk.front() << endl;
-    cout << stk.back() << endl;
-    stk.push(3);
-    
-    stk.pop();
-    stk.pop();
-    cout << stk.back() << endl;
     
     
-    stk2.push(3);
-    cout << "size=" << stk.size() << " size2=" << stk2.size() << endl;
-    cout << (stk == stk2) << endl; 
+    stk2.push(999);
+
+    stk.swap(stk2);
+
+    cout << stk.top() << " " << stk2.top()<<endl;
+
+
 
 
 

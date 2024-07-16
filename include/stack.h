@@ -39,12 +39,12 @@ namespace istl
 
         void push(const value_type& val){ _container.push_back(val); }
         void pop(){ _container.pop_back(); }
-        void swap(stack& other){ std::swap(_container, other.container_); }
+        void swap(stack& other){ _container.swap(other._container); }
     
     public:
         friend bool operator== <>(const stack<T, Container>& lhs, const stack<T, Container>& rhs);
         friend bool operator!= <>(const stack<T, Container>& lhs, const stack<T, Container>& rhs);
-        // friend void swap<>(stack<T, Container>& x, stack<T, Container>& y);
+        //friend void swap(stack<T, Container>& x, stack<T, Container>& y);
     };
 
     template <typename T, typename Container>

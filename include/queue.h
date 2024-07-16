@@ -10,6 +10,7 @@ namespace istl
     bool operator== (const queue<T, Container>& lhs, const queue<T, Container>& rhs);
     template <typename T, typename Container>
     bool operator!= (const queue<T, Container>& lhs, const queue<T, Container>& rhs);
+    
     // template <typename T, typename Container>
     // void swap(queue<T, Container>& x, queue<T, Container>& y);
 
@@ -35,7 +36,7 @@ namespace istl
         const_reference& back() const{ return _container.back(); }
         void push(const value_type& val){ _container.push_back(val); }
         void pop(){ _container.pop_front(); }
-        void swap(queue& x){ _container.swap(x._container); }
+        void swap(queue& other){ _container.swap(other._container); }
 
     public:
 
@@ -59,7 +60,7 @@ namespace istl
 
     // template <typename T, typename Container>
     // void swap(queue<T, Container>& x, queue<T, Container>& y){
-    //     TinySTL::swap(x._container, y._container);
+    //     x._container.swap(y._container);
     // }
 
     
