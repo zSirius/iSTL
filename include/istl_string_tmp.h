@@ -214,7 +214,6 @@
 
 // 		void moveData(string& str);
 // 		template<class InputIterator>
-		
 // 		void allocateAndCopy(InputIterator first, InputIterator last);
 // 		void allocateAndFillN(size_t n, char c);
 // 		void destroyAndDeallocate();
