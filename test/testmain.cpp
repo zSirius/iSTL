@@ -7,6 +7,7 @@
 #include "stack.h"
 #include "queue.h"
 #include "istl_string.h"
+#include "vector.h"
 
 // void vectorBenchmark();
 // void dequeBenchmark();
@@ -61,6 +62,19 @@ int main(){
     // cout << "Address of s.sso.size: " << static_cast<void*>(&s._buffer_size) << endl;
     // cout << "Address of s.sso.buffer[0]: " << static_cast<void*>(&s._buffer[0]) << endl;
 
+    istl::vector<int> v{1,2,3,4,5,6}, v2{90,91,92,93,94};
+    for(auto t : v){
+        cout << t << " ";
+    }
+    cout << endl;
+
+    v.reserve(100);
+
+    v.insert(v.begin()+1, 10, 5);
+
+    for(auto t : v){
+        cout << t << " ";
+    }
 
     return 0;
 }

@@ -43,6 +43,8 @@ namespace istl
         
         vector(const vector& v);
         vector(vector&& v);
+
+        vector(std::initializer_list<T> init);
         
         vector& operator = (const vector& v);
         vector& operator = (vector&& v);

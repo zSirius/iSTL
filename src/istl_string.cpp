@@ -27,7 +27,7 @@ namespace istl
 
     string::string(size_t n, char c){
         if(n <= _SSO_THRESHOLD){
-            _buffer_size = n;
+            _buffer_size = n << 1;
             memset(_buffer, c, n);
             _buffer[n] = '\0';
         }else{
@@ -58,10 +58,10 @@ namespace istl
 		return *this;
 	}
 
-    string& string::operator= (char c){
+    string& string::operator= (char ch){
 		clearData();
-		_buffer_size = 1;
-        _buffer[0] = c;
+		_buffer_size = 1 << 1;
+        _buffer[0] = ch;
         _buffer[1] = '\0';
 		return *this;
 	}
@@ -74,17 +74,14 @@ namespace istl
         resize(n, value_type());
     }
 
-    void string::resize(size_t n, char c){
+    void string::resize(size_t n, char ch){
         size_t size_ = size();
         //std::cout << "n = " << n << " size_ = " << size_<< std::endl;
         if(isSSO() && n <= _SSO_THRESHOLD){
-            if(n < size_){
-                _buffer_size = n;
-                _buffer[n] = '\0';
-            }else if(n > size_){
-                _buffer_size = n;
-                memset(_buffer + size_, c, n - size_);
-                _buffer[n] = '\0';
+            _buffer_size = n << 1;
+            _buffer[n] = '\0';
+            if(n > size_){
+                memset(_buffer + size_, ch, n - size_);
             }
         }else{
             if (n < size_){
@@ -94,7 +91,7 @@ namespace istl
             }
             else if (n > size_ && n <= capacity()){
                 auto lengthOfInsert = n - size_;
-                istl::uninitialized_fill_n(_start + size_, lengthOfInsert, c);
+                istl::uninitialized_fill_n(_start + size_, lengthOfInsert, ch);
                 _size = n;
                 _start[n] = '\0';
             }else if (n > capacity()){
@@ -103,7 +100,7 @@ namespace istl
                 //std::cout << " newcap = " << newCapacity<< std::endl;
                 iterator newStart = dataAllocator::allocate(newCapacity);
                 iterator newFinish = istl::uninitialized_copy(begin(), end(), newStart);
-                newFinish = istl::uninitialized_fill_n(newFinish, lengthOfInsert, c);
+                newFinish = istl::uninitialized_fill_n(newFinish, lengthOfInsert, ch);
 
                 destroyAndDeallocate();
                 _start = newStart;
@@ -121,6 +118,7 @@ namespace istl
 		destroyAndDeallocate();
 		_start = newStart; 
 		_capacity = n;
+        setNotSSO();
 	}
 
     void string::shrink_to_fit(){
@@ -130,6 +128,7 @@ namespace istl
             destroyAndDeallocate();
             _start = newstart;
             _capacity = _size;
+            setNotSSO();
         }
     }
 
@@ -138,10 +137,73 @@ namespace istl
         else return _start;
     }
 
+    /* insert */
+    // string& string::insert(size_t index, const string& str){
+	// 	insert(start_ + index, str.begin(), str.end());
+	// 	return *this;
+    // }
 
-    void string::allocateAndFillN(size_t n, char c){
+    // string& string::insert(size_t index, const string& str, size_t subindex, size_t sublen){
+	// 	sublen = changeVarWhenEuqalNPOS(sublen, str.size(), subindex);
+	// 	insert(begin() + index, str.begin() + subindex, str.begin() + subindex + sublen);
+	// 	return *this;
+	// }
+
+    // string& string::insert(size_t index, const char* s){
+	// 	insert(begin() + index, s, s + strlen(s));
+	// 	return *this;
+	// }
+
+    // string& string::insert(size_t index, const char* s, size_t n){
+	// 	insert(begin() + index, s, s + n);
+	// 	return *this;
+	// }
+
+    string& string::insert(size_t index, size_t n, char ch){
+		insert(begin() + index, n, ch);
+		return *this;
+	}
+    string::iterator string::insert(iterator pos, size_t count, char ch){
+        difference_type idx = pos - begin();
+        iterator vpos = begin() + idx;
+        if(count == 0) return vpos;
+        difference_type SpaceLeft = capacity() - size();
+        difference_type SpaceNeed = count;
+
+        if(SpaceLeft >= SpaceNeed){
+            // for(iterator ptr = vpos; ptr < end(); ++ptr){
+            //     dataAllocator::construct(ptr + SpaceNeed, std::move(*ptr));
+            // }
+            memmove(vpos, vpos+count, end() - vpos + 1);
+            istl::uninitialized_fill_n(vpos, count, ch);
+            setSize(size()+count);
+        }else{
+            size_t oldsize = _size;
+            difference_type newCapacity = getNewCapacity(capacity() + count);
+
+            iterator newstart = dataAllocator::allocate(newCapacity);
+            iterator newfinish = istl::uninitialized_move(begin(), vpos, newstart);
+            newfinish = istl::uninitialized_fill_n(newfinish, count, ch);
+            newfinish = istl::uninitialized_move(vpos, end(), newfinish);
+
+            destroyAndDeallocate();
+            _start = newstart;
+            _capacity = newCapacity-1;
+            setNotSSO();
+            _size = oldsize + count;
+        }
+        return begin() + idx;
+	}
+
+    string::iterator string::insert(iterator p, char ch){
+		return insert(p, 1, ch);
+	}
+
+
+
+    void string::allocateAndFillN(size_t n, char ch){
         _start = dataAllocator::allocate(n+1);
-        istl::uninitialized_fill_n(_start, n, c);
+        istl::uninitialized_fill_n(_start, n, ch);
         _start[n] = '\0';
         _size = _capacity = n;
     }
@@ -191,7 +253,7 @@ namespace istl
 
     void string::copyData(const char* src, size_t len){
         if(len <= _SSO_THRESHOLD){
-            _buffer_size = len;
+            _buffer_size = len << 1;
             strncpy(_buffer, src, len);
             _buffer[len] = '\0';
         }else{

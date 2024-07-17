@@ -29,7 +29,7 @@ namespace istl
         //npos is a static member constant value with the greatest possible value for an element of type size_t.
         static const size_t npos = -1;
 
-    public://private
+    private:
         //little endian and 64bit system implement
         union {
             struct {
@@ -54,6 +54,11 @@ namespace istl
             _capacity = (_capacity << 1) | 0x1;
         }
 
+        void setSize(size_t newsize){
+            if(isSSO()) _buffer_size = newsize << 1;
+            else _size = newsize;
+        }
+
     public:
         /* 构造 赋值 析构*/
         string():_capacity(0), _size(0), _start(nullptr){}
@@ -62,14 +67,14 @@ namespace istl
         string(const string& str, size_t pos, size_t len = npos);
         string(const char* s);
         string(const char* s, size_t n);
-        string(size_t n, char c);
+        string(size_t n, char ch);
         template <typename InputIterator>
         string(InputIterator first, InputIterator last);
 
         string& operator= (const string& str);
         string& operator= (string&& str);
         string& operator= (const char* s);
-        string& operator= (char c);
+        string& operator= (char ch);
 
         ~string();
 
@@ -95,7 +100,7 @@ namespace istl
         void clear(){ clearData(); }
         bool empty() const{ return size() == 0; }
         void resize(size_t n);
-		void resize(size_t n, char c);
+		void resize(size_t n, char ch);
 		void reserve(size_t n = 0);
 
         void shrink_to_fit();
@@ -112,13 +117,24 @@ namespace istl
         const char* c_str()const;
         //const char* data()const;
 
+        //insert
+        string& insert(size_t index, const string& str);
+		string& insert(size_t index, const string& str, size_t subindex, size_t sublen = npos);
+		string& insert(size_t index, const char* s);
+		string& insert(size_t index, const char* s, size_t n);
+		string& insert(size_t index, size_t n, char ch);
+		iterator insert(iterator pos, size_t n, char ch);
+		iterator insert(iterator pos, char ch);
+        template <class InputIterator>
+		iterator insert(iterator pos, InputIterator first, InputIterator last);
+
     private:
     	template<typename InputIterator>
 	    void string_aux(InputIterator first, InputIterator last, std::false_type);
 
         template<typename InputIterator>
         void allocateAndCopy(InputIterator it, size_t n);
-        void allocateAndFillN(size_t n, char c);
+        void allocateAndFillN(size_t n, char ch);
         void destroyAndDeallocate();
         size_t GetValidLenth(const string &str, size_t pos, size_t len)const;
         void moveData(string &str);

@@ -38,6 +38,11 @@ namespace istl
     }
 
     template<typename T, typename Alloc>
+    vector<T, Alloc>::vector(std::initializer_list<T> init){
+        allocateAndCopy(init.begin(), init.end());
+    }
+
+    template<typename T, typename Alloc>
     vector<T, Alloc>& vector<T, Alloc>::operator = (const vector &v){
         if(this != &v){
             destroyAndDeallocateAll();
@@ -171,9 +176,8 @@ namespace istl
         difference_type SpaceLeft = _endOfStorage - _finish;
         difference_type SpaceNeed = count;
         if(SpaceLeft >= SpaceNeed){
-            auto ptr = end() - 1;
-            for(; ptr >= pos; --ptr){
-                dataAllocator::construct(vpos+SpaceNeed, std::move(*ptr));
+            for(iterator ptr = vpos; ptr < end(); ++ptr){
+                dataAllocator::construct(ptr + SpaceNeed, std::move(*ptr));
             }
             istl::uninitialized_fill_n(vpos, count, value);
             _finish += count;
