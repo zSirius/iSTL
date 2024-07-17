@@ -33,8 +33,8 @@ int main(){
     //dequeBenchmark();
     // listBenchmark();
     //istl::string s("1234567");
-    istl::string s("123456789012345678901234567");
-    istl::string s2(s.begin(), s.begin()+24);
+    istl::string s("123456789012345678901234567", 3);
+    istl::string s2 = "122222";
     cout << s.isSSO() << endl;
     cout << &s._capacity << " " << &s._size << " " << &s._start << endl;
     cout << "Size of istl::string: " << sizeof(s) << endl;

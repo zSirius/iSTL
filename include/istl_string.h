@@ -63,10 +63,10 @@ namespace istl
         template <typename InputIterator>
         string(InputIterator first, InputIterator last);
 
-        // string& operator= (const string& str);
-        // string& operator= (string&& str);
-        // string& operator= (const char* s);
-        // string& operator= (char c);
+        string& operator= (const string& str);
+        string& operator= (string&& str);
+        string& operator= (const char* s);
+        string& operator= (char c);
 
         ~string();
 
@@ -88,6 +88,32 @@ namespace istl
         size_t length() const{ return size(); }
         size_t capacity() const{ return isSSO() ? _SSO_THRESHOLD : (_capacity & 0x7f); }
 
+        // 容量相关
+        // void clear(){
+        //     dataAllocator::destroy(start_, finish_);
+        //     // ？？start_ = finish_;
+        //     finish_ = start_;
+        // }
+
+        // bool empty() const{ return begin() == end(); }
+        // void resize(size_t n);
+		// void resize(size_t n, char c);
+		// void reserve(size_t n = 0);
+
+        // void shrink_to_fit();
+
+
+        // char& operator[] (size_t pos){ return *(start_ + pos); }
+		// const char& operator[] (size_t pos) const{ return *(start_ + pos); }
+		// char& back(){ return *(finish_ - 1); }
+		// const char& back() const{ return *(finish_ - 1); }
+		// char& front(){ return *(start_); }
+		// const char& front() const{ return *(start_); }
+
+        //get "const char *" 
+        const char* c_str()const;
+        //const char* data()const;
+
     private:
     	template<typename InputIterator>
 	    void string_aux(InputIterator first, InputIterator last, std::false_type);
@@ -97,6 +123,9 @@ namespace istl
         void allocateAndFillN(size_t n, char c);
         void destroyAndDeallocate();
         size_t GetValidLenth(const string &str, size_t pos, size_t len)const;
+        void moveData(string &str);
+        void clearData();
+        void copyData(const char* src, size_t len);
     
     };
 
