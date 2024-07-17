@@ -8,7 +8,6 @@
                 "-std=c++17", 
                 "-fdiagnostics-color=always",
                 "-g",
-                "-O3",
                 "${workspaceFolder}/test/*.cpp",
                 "${workspaceFolder}/src/*.cpp",
                 "-I",

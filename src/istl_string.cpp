@@ -1,17 +1,11 @@
 #include "istl_string.h"
 #include "uninitialized.h"
+#include <iostream>
 
 namespace istl
 {
     
     string::string(const string& str){
-        // if(str.isSSO()){
-        //     _buffer_size = str._buffer_size;
-        //     strcpy(_buffer, str._buffer);
-        // }else{
-        //     allocateAndCopy(str._start, str._size);
-        //     setNotSSO();
-        // }
         copyData(str.c_str(), str.size());
     }
     
@@ -21,38 +15,13 @@ namespace istl
 
     string::string(const string& str, size_t pos, size_t len){
         len = GetValidLenth(str, pos, len);
-        // if(len <= _SSO_THRESHOLD){
-        //     _buffer_size = len;
-        //     strncpy(_buffer, str.begin()+pos, len);
-        //     _buffer[len] = '\0';
-        // }else{
-        //     allocateAndCopy(str._start + pos, len);
-        //     setNotSSO();
-        // }
         copyData(str.c_str()+pos, len);
     }
     string::string(const char* s){
-        // size_t len = strlen(s);
-        // if(len <= _SSO_THRESHOLD){
-        //     _buffer_size = len;
-        //     strncpy(_buffer, s, len);
-        //     _buffer[len] = '\0';
-        // }else{
-        //     allocateAndCopy(s, len);
-        //     setNotSSO();
-        // }
         copyData(s, strlen(s));
     }
 
     string::string(const char* s, size_t n){
-        // if(n <= _SSO_THRESHOLD){
-        //     _buffer_size = n;
-        //     strncpy(_buffer, s, n);
-        //     _buffer[n] = '\0';
-        // }else{
-        //     allocateAndCopy(s, n);
-        //     setNotSSO();
-        // }
         copyData(s, n);
     }
 
@@ -70,13 +39,6 @@ namespace istl
     string& string::operator= (const string& str){
 		if (this != &str){
             clearData();
-            // if(str.isSSO()){
-            //     _buffer_size = str._buffer_size;
-            //     strcpy(_buffer, str._buffer);
-            // }else{
-            //     allocateAndCopy(str._start, str.size());
-            //     setNotSSO();
-            // }
             copyData(str.c_str(), str.size());
 		}
 		return *this;
@@ -106,6 +68,69 @@ namespace istl
 
     string::~string(){
         clearData();
+    }
+
+    void string::resize(size_t n){
+        resize(n, value_type());
+    }
+
+    void string::resize(size_t n, char c){
+        size_t size_ = size();
+        //std::cout << "n = " << n << " size_ = " << size_<< std::endl;
+        if(isSSO() && n <= _SSO_THRESHOLD){
+            if(n < size_){
+                _buffer_size = n;
+                _buffer[n] = '\0';
+            }else if(n > size_){
+                _buffer_size = n;
+                memset(_buffer + size_, c, n - size_);
+                _buffer[n] = '\0';
+            }
+        }else{
+            if (n < size_){
+                dataAllocator::destroy(_start + n, _start + size_);
+                _size = n;
+                _start[n] = '\0';
+            }
+            else if (n > size_ && n <= capacity()){
+                auto lengthOfInsert = n - size_;
+                istl::uninitialized_fill_n(_start + size_, lengthOfInsert, c);
+                _size = n;
+                _start[n] = '\0';
+            }else if (n > capacity()){
+                auto lengthOfInsert = n - size_;
+                size_t newCapacity = getNewCapacity(n);
+                //std::cout << " newcap = " << newCapacity<< std::endl;
+                iterator newStart = dataAllocator::allocate(newCapacity);
+                iterator newFinish = istl::uninitialized_copy(begin(), end(), newStart);
+                newFinish = istl::uninitialized_fill_n(newFinish, lengthOfInsert, c);
+
+                destroyAndDeallocate();
+                _start = newStart;
+                _size = n;
+                _capacity = newCapacity - 1;
+                setNotSSO();
+            }
+        }
+    }
+
+    void string::reserve(size_t n){
+		if (n <= capacity()) return;
+		iterator newStart = dataAllocator::allocate(n+1);
+		iterator newFinish = istl::uninitialized_move(begin(), end()+1, newStart);
+		destroyAndDeallocate();
+		_start = newStart; 
+		_capacity = n;
+	}
+
+    void string::shrink_to_fit(){
+        if(!isSSO() && capacity() > size()){
+            iterator newstart = dataAllocator::allocate(size()+1);
+            iterator newfinish = istl::uninitialized_move(_start, _start + _size + 1, newstart);
+            destroyAndDeallocate();
+            _start = newstart;
+            _capacity = _size;
+        }
     }
 
     const char* string::c_str()const{
@@ -174,5 +199,22 @@ namespace istl
             setNotSSO();
         }
     }
+
+    string::size_type string::getNewCapacity(size_type needCapacity)const{
+        /*
+        内存分配策略
+        构造函数初始化时：
+        if needCapacity > _SSO_THREHOLD: 分配needCapacity + 16
+        else 在栈上(_buffer)分配 - SSO技术
+        内存扩张策略:
+        if needCapacity > _SSO_THREHOLD && needCapacity < 2*Capacity:
+            newCapacity = 2 * Capacity
+        else if needCapacity > 2*Capacity
+            newCapacity = (needCapacity + 15) & (~15);
+        */
+		size_type oldCapacity = capacity() + 1;
+        size_type newCapacity = needCapacity < (2*oldCapacity) ? (2*oldCapacity) : ((needCapacity + 15) & (~15));
+		return newCapacity;
+	}
 
 } // namespace istl

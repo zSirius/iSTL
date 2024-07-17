@@ -33,13 +33,33 @@ int main(){
     //dequeBenchmark();
     // listBenchmark();
     //istl::string s("1234567");
-    istl::string s("123456789012345678901234567", 3);
-    istl::string s2 = "122222";
-    cout << s.isSSO() << endl;
-    cout << &s._capacity << " " << &s._size << " " << &s._start << endl;
-    cout << "Size of istl::string: " << sizeof(s) << endl;
-    cout << "Address of s.sso.size: " << static_cast<void*>(&s._buffer_size) << endl;
-    cout << "Address of s.sso.buffer[0]: " << static_cast<void*>(&s._buffer[0]) << endl;
+    // istl::string s("123456789012345678901234567");
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+    // s.resize(33);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+
+    // s.resize(66);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+
+    // s.resize(277);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+
+    // s.resize(510);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+
+    // s.resize(1300);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+
+
+    
+    
+    //istl::string s2 = "122222";
+
+    // cout << s.isSSO() << endl;
+    // cout << &s._capacity << " " << &s._size << " " << &s._start << endl;
+    // cout << "Size of istl::string: " << sizeof(s) << endl;
+    // cout << "Address of s.sso.size: " << static_cast<void*>(&s._buffer_size) << endl;
+    // cout << "Address of s.sso.buffer[0]: " << static_cast<void*>(&s._buffer[0]) << endl;
 
 
     return 0;
