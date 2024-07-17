@@ -33,9 +33,13 @@ int main(){
     //vectorBenchmark();
     //dequeBenchmark();
     // listBenchmark();
-    //istl::string s("1234567");
-    // istl::string s("123456789012345678901234567");
-    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+    istl::string s("01234567");
+    istl::string s1("0123456789012345678901234567");
+    //s.insert(6, "123567");
+    s.insert(6, 20, 'a');
+    cout << s;
+    cout << endl;
+    cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
     // s.resize(33);
     // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
 
@@ -62,19 +66,19 @@ int main(){
     // cout << "Address of s.sso.size: " << static_cast<void*>(&s._buffer_size) << endl;
     // cout << "Address of s.sso.buffer[0]: " << static_cast<void*>(&s._buffer[0]) << endl;
 
-    istl::vector<int> v{1,2,3,4,5,6}, v2{90,91,92,93,94};
-    for(auto t : v){
-        cout << t << " ";
-    }
-    cout << endl;
+    // istl::vector<int> v{1,2,3,4,5,6}, v2{90,91,92,93,94};
+    // for(auto t : v){
+    //     cout << t << " ";
+    // }
+    // cout << endl;
 
-    v.reserve(100);
+    // v.reserve(100);
 
-    v.insert(v.begin()+1, 10, 5);
+    // v.insert(v.begin()+1, 10, 5);
 
-    for(auto t : v){
-        cout << t << " ";
-    }
+    // for(auto t : v){
+    //     cout << t << " ";
+    // }
 
     return 0;
 }

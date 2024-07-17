@@ -7,6 +7,7 @@
 #include <cstring>
 #include <utility>
 #include <cstddef>
+#include <iostream>
 #include "allocator.h"
 #include "ReverseIterator.h"
 #include "uninitialized.h"
@@ -128,6 +129,36 @@ namespace istl
         template <class InputIterator>
 		iterator insert(iterator pos, InputIterator first, InputIterator last);
 
+        //运算符重载
+        friend std::ostream& operator <<(std::ostream& os, const string&str);
+		// friend std::istream& operator >> (std::istream& is, string& str);
+		// friend string operator+ (const string& lhs, const string& rhs);
+		// friend string operator+ (const string& lhs, const char* rhs);
+		// friend string operator+ (const char* lhs, const string& rhs);
+		// friend string operator+ (const string& lhs, char rhs);
+		// friend string operator+ (char lhs, const string& rhs);
+		// friend bool operator== (const string& lhs, const string& rhs);
+		// friend bool operator== (const char*   lhs, const string& rhs);
+		// friend bool operator== (const string& lhs, const char*   rhs);
+		// friend bool operator!= (const string& lhs, const string& rhs);
+		// friend bool operator!= (const char*   lhs, const string& rhs);
+		// friend bool operator!= (const string& lhs, const char*   rhs);
+		// friend bool operator<  (const string& lhs, const string& rhs);
+		// friend bool operator<  (const char*   lhs, const string& rhs);
+		// friend bool operator<  (const string& lhs, const char*   rhs);
+		// friend bool operator<= (const string& lhs, const string& rhs);
+		// friend bool operator<= (const char*   lhs, const string& rhs);
+		// friend bool operator<= (const string& lhs, const char*   rhs);
+		// friend bool operator>  (const string& lhs, const string& rhs);
+		// friend bool operator>  (const char*   lhs, const string& rhs);
+		// friend bool operator>  (const string& lhs, const char*   rhs);
+		// friend bool operator>= (const string& lhs, const string& rhs);
+		// friend bool operator>= (const char*   lhs, const string& rhs);
+		// friend bool operator>= (const string& lhs, const char*   rhs);
+		// friend void swap(string& x, string& y);
+		// friend std::istream& getline(std::istream& is, string& str, char delim);
+		// friend std::istream& getline(std::istream& is, string& str);
+
     private:
     	template<typename InputIterator>
 	    void string_aux(InputIterator first, InputIterator last, std::false_type);
@@ -175,6 +206,39 @@ namespace istl
         _capacity = needCapacity - 1;
     }
 
+	template <typename InputIterator>
+	typename string::iterator 
+	string::insert(iterator pos, InputIterator first, InputIterator last){
+       	difference_type len = pos - begin();
+        if(first == last) return pos;
+        difference_type SpaceLeft = capacity() - size();
+        difference_type SpaceNeed = last - first;
+        
+
+        if(SpaceLeft >= SpaceNeed){
+            memmove(pos+SpaceNeed, pos, size()-len+1);
+            memmove(pos, first, SpaceNeed);
+            setSize(size() + SpaceNeed);
+        }else{
+            size_t oldsize = size();
+            difference_type newCapacity = getNewCapacity(size()+SpaceNeed);
+            iterator newstart = dataAllocator::allocate(newCapacity);
+
+            memmove(newstart, begin(), len);
+            memmove(newstart+len, first, SpaceNeed);
+            memmove(newstart+len+SpaceNeed, pos, size()-len+1);
+            
+            if(!isSSO()){
+                destroyAndDeallocate();
+            }
+            
+            _start = newstart;
+            _size = oldsize + SpaceNeed;
+            _capacity = newCapacity-1;
+            setNotSSO();
+        }
+        return begin()+len;
+	}
 
 
 

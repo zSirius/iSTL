@@ -223,43 +223,43 @@
 
 //     };
 
-// 	template <class InputIterator>
-// 	typename string::iterator 
-// 	string::insert(iterator pos, InputIterator first, InputIterator last){
-//        	difference_type idx = pos - begin();
-//         iterator vpos = begin() + idx;
-//         if(first == last) return vpos;
-//         difference_type SpaceLeft = _endOfStorage - _finish;
-//         difference_type SpaceNeed = last - first;
+	// template <class InputIterator>
+	// typename string::iterator 
+	// string::insert(iterator pos, InputIterator first, InputIterator last){
+    //    	difference_type idx = pos - begin();
+    //     iterator vpos = begin() + idx;
+    //     if(first == last) return vpos;
+    //     difference_type SpaceLeft = _endOfStorage - _finish;
+    //     difference_type SpaceNeed = last - first;
         
 
-//         if(SpaceLeft >= SpaceNeed){
-//             if(_finish - pos > SpaceNeed){
-//                 istl::uninitialized_copy(_finish - SpaceNeed, _finish, _finish);
-//                 std::copy_backward(vpos, _finish-SpaceNeed, _finish);
-//                 std::copy(first, last, vpos);
-//             }else{
-//                 difference_type dif = _finish - vpos;
-//                 iterator InsertItTail = first + dif;
-//                 iterator tmp = istl::uninitialized_copy(InsertItTail, last, _finish);
-//                 istl::uninitialized_copy(vpos, _finish, tmp);
-//                 std::copy(first, InsertItTail, vpos);
-//             }
-//             _finish += SpaceNeed;
-//         }else{
-//             difference_type newCapacity = getNewCapacity(last - first);
-//             T *newstart = dataAllocator::allocate(newCapacity);
-//             T *newfinish = istl::uninitialized_move(begin(), vpos, newstart);
-//             newfinish = istl::uninitialized_copy(first, last, newfinish);
-//             newfinish = istl::uninitialized_move(vpos, end(), newfinish);
+    //     if(SpaceLeft >= SpaceNeed){
+    //         if(_finish - pos > SpaceNeed){
+    //             istl::uninitialized_copy(_finish - SpaceNeed, _finish, _finish);
+    //             std::copy_backward(vpos, _finish-SpaceNeed, _finish);
+    //             std::copy(first, last, vpos);
+    //         }else{
+    //             difference_type dif = _finish - vpos;
+    //             iterator InsertItTail = first + dif;
+    //             iterator tmp = istl::uninitialized_copy(InsertItTail, last, _finish);
+    //             istl::uninitialized_copy(vpos, _finish, tmp);
+    //             std::copy(first, InsertItTail, vpos);
+    //         }
+    //         _finish += SpaceNeed;
+    //     }else{
+    //         difference_type newCapacity = getNewCapacity(last - first);
+    //         T *newstart = dataAllocator::allocate(newCapacity);
+    //         T *newfinish = istl::uninitialized_move(begin(), vpos, newstart);
+    //         newfinish = istl::uninitialized_copy(first, last, newfinish);
+    //         newfinish = istl::uninitialized_move(vpos, end(), newfinish);
 
-//             destroyAndDeallocateAll();
-//             _start = newstart;
-//             _finish = newfinish;
-//             _endOfStorage = _start + newCapacity;
-//         }
-//         return begin()+idx;
-// 	}
+    //         destroyAndDeallocateAll();
+    //         _start = newstart;
+    //         _finish = newfinish;
+    //         _endOfStorage = _start + newCapacity;
+    //     }
+    //     return begin()+idx;
+	// }
 
 // 	template<class InputIterator>
 // 	void string::string_aux(InputIterator first, InputIterator last, std::false_type){

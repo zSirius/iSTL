@@ -138,65 +138,71 @@ namespace istl
     }
 
     /* insert */
-    // string& string::insert(size_t index, const string& str){
-	// 	insert(start_ + index, str.begin(), str.end());
-	// 	return *this;
-    // }
+    string& string::insert(size_t index, const string& str){
+		insert(_start + index, str.begin(), str.end());
+		return *this;
+    }
 
-    // string& string::insert(size_t index, const string& str, size_t subindex, size_t sublen){
-	// 	sublen = changeVarWhenEuqalNPOS(sublen, str.size(), subindex);
-	// 	insert(begin() + index, str.begin() + subindex, str.begin() + subindex + sublen);
-	// 	return *this;
-	// }
+    string& string::insert(size_t index, const string& str, size_t subindex, size_t sublen){
+		sublen = GetValidLenth(str, subindex, sublen);
+		insert(begin() + index, str.begin() + subindex, str.begin() + subindex + sublen);
+		return *this;
+	}
 
-    // string& string::insert(size_t index, const char* s){
-	// 	insert(begin() + index, s, s + strlen(s));
-	// 	return *this;
-	// }
+    string& string::insert(size_t index, const char* s){
+		insert(begin() + index, s, s + strlen(s));
+		return *this;
+	}
 
-    // string& string::insert(size_t index, const char* s, size_t n){
-	// 	insert(begin() + index, s, s + n);
-	// 	return *this;
-	// }
+    string& string::insert(size_t index, const char* s, size_t n){
+		insert(begin() + index, s, s + n);
+		return *this;
+	}
 
     string& string::insert(size_t index, size_t n, char ch){
 		insert(begin() + index, n, ch);
 		return *this;
 	}
     string::iterator string::insert(iterator pos, size_t count, char ch){
-        difference_type idx = pos - begin();
-        iterator vpos = begin() + idx;
-        if(count == 0) return vpos;
+        difference_type len = pos - begin();
+        if(count == 0) return pos;
         difference_type SpaceLeft = capacity() - size();
         difference_type SpaceNeed = count;
 
         if(SpaceLeft >= SpaceNeed){
-            // for(iterator ptr = vpos; ptr < end(); ++ptr){
-            //     dataAllocator::construct(ptr + SpaceNeed, std::move(*ptr));
-            // }
-            memmove(vpos, vpos+count, end() - vpos + 1);
-            istl::uninitialized_fill_n(vpos, count, ch);
+            memmove(pos+count, pos, size()-len+1);
+            istl::uninitialized_fill_n(pos, count, ch);
             setSize(size()+count);
         }else{
-            size_t oldsize = _size;
+            size_t oldsize = size();
             difference_type newCapacity = getNewCapacity(capacity() + count);
-
             iterator newstart = dataAllocator::allocate(newCapacity);
-            iterator newfinish = istl::uninitialized_move(begin(), vpos, newstart);
-            newfinish = istl::uninitialized_fill_n(newfinish, count, ch);
-            newfinish = istl::uninitialized_move(vpos, end(), newfinish);
 
-            destroyAndDeallocate();
+            memmove(newstart, begin(), len);
+            istl::uninitialized_fill_n(newstart+len, count, ch);
+            memmove(newstart+len+SpaceNeed, pos, size()-len+1);
+
+            if(!isSSO()){
+                destroyAndDeallocate();
+            }
             _start = newstart;
+            _size = oldsize + count;
             _capacity = newCapacity-1;
             setNotSSO();
-            _size = oldsize + count;
         }
-        return begin() + idx;
+        return begin() + len;
 	}
 
     string::iterator string::insert(iterator p, char ch){
 		return insert(p, 1, ch);
+	}
+
+    //运算符重载
+    std::ostream& operator <<(std::ostream& os, const string& str){
+		for (const auto ch : str){
+			os << ch;
+		}
+		return os;
 	}
 
 
