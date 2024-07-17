@@ -10,6 +10,7 @@ namespace istl
             strcpy(_buffer, str._buffer);
         }else{
             allocateAndCopy(str._start, str._size);
+            setNotSSO();
         }
     }
     
@@ -32,13 +33,14 @@ namespace istl
     }
 
     string::string(const string& str, size_t pos, size_t len){
-        len = changeVarWhenEuqalNPOS(len, pos, str.size());
+        len = GetValidLenth(str, pos, len);
         if(len <= _SSO_THRESHOLD){
             _buffer_size = len;
             strncpy(_buffer, str.begin()+pos, len);
             _buffer[len] = '\0';
         }else{
             allocateAndCopy(str._start + pos, len);
+            setNotSSO();
         }
     }
     string::string(const char* s){
@@ -49,6 +51,7 @@ namespace istl
             _buffer[len] = '\0';
         }else{
             allocateAndCopy(s, len);
+            setNotSSO();
         }
     }
 
@@ -59,11 +62,19 @@ namespace istl
             _buffer[n] = '\0';
         }else{
             allocateAndCopy(s, n);
+            setNotSSO();
         }
     }
 
     string::string(size_t n, char c){
-        allocateAndFillN(n, c);
+        if(n <= _SSO_THRESHOLD){
+            _buffer_size = n;
+            memset(_buffer, c, n);
+            _buffer[n] = '\0';
+        }else{
+            allocateAndFillN(n, c);
+            setNotSSO();
+        }
     }
 
     string::~string(){
@@ -86,14 +97,18 @@ namespace istl
     void string::destroyAndDeallocate(){
         if(capacity() != 0){
             dataAllocator::destroy(_start, _start + _size + 1);
-            dataAllocator::deallocate(_start, _capacity + 1);
+            dataAllocator::deallocate(_start, capacity() + 1);
             _start = nullptr;
             _size = _capacity = 0;
         }
     }
     
-    size_t string::changeVarWhenEuqalNPOS(size_t var, size_t pos, size_t end)const{
-        return (var == npos ? end - pos : var);
+    size_t string::GetValidLenth(const string &str, size_t pos, size_t len)const{
+        size_t remaining_length = str.length() - pos;
+        if(len == npos || len > remaining_length){
+            len = remaining_length;
+        }
+        return len;
     }
 
 } // namespace istl

@@ -9,6 +9,7 @@
 #include <cstddef>
 #include "allocator.h"
 #include "ReverseIterator.h"
+#include "uninitialized.h"
 
 #define _SSO_THRESHOLD 22
 namespace istl
@@ -32,7 +33,7 @@ namespace istl
         union {
             struct {
                 unsigned char _buffer_size; // 第一个字节，用于存储短字符串长度（7位）和标志位（1位）
-                char _buffer[_SSO_THRESHOLD]; // 短字符串存储区
+                char _buffer[_SSO_THRESHOLD+1]; // 短字符串存储区
             };
             struct {
                 size_t _capacity; // 长字符串的容量
@@ -44,6 +45,10 @@ namespace istl
 
         bool isSSO() const {
             return (_buffer_size & 0x80) == 0; // 使用最高位来区分长字符串和短字符串, 0为短字符串
+        }
+
+        void setNotSSO() {
+            _buffer_size = _buffer_size | 0x80;
         }
 
     public:
@@ -81,24 +86,32 @@ namespace istl
         const_reverse_iterator crend() const{ return const_reverse_iterator(begin()); }
         size_t size() const{ return isSSO() ? _buffer_size : _size; }
         size_t length() const{ return size(); }
-        size_t capacity() const{ return isSSO() ? _SSO_THRESHOLD : _capacity; }
+        size_t capacity() const{ return isSSO() ? _SSO_THRESHOLD : (_capacity & 0x7f); }
 
     private:
     	template<typename InputIterator>
-	    void string::string_aux(InputIterator first, InputIterator last, std::false_type);
+	    void string_aux(InputIterator first, InputIterator last, std::false_type);
 
         template<typename InputIterator>
         void allocateAndCopy(InputIterator it, size_t n);
-        void string::allocateAndFillN(size_t n, char c);
+        void allocateAndFillN(size_t n, char c);
         void destroyAndDeallocate();
-        size_t changeVarWhenEuqalNPOS(size_t var, size_t pos, size_t end)const;
+        size_t GetValidLenth(const string &str, size_t pos, size_t len)const;
     
     };
 
 
     template<typename InputIterator>
     void string::string_aux(InputIterator first, InputIterator last, std::false_type){
-        allocateAndCopy(first, last - first);
+        difference_type n = last - first;
+        if(n <= _SSO_THRESHOLD){
+            _buffer_size = n;
+            strncpy(_buffer, first, n);
+            _buffer[n] = '\0';
+        }else{
+            allocateAndCopy(first, last - first);
+            setNotSSO();
+        }
     }
 
     template<typename InputIterator>
