@@ -101,8 +101,9 @@ namespace istl
                 iterator newStart = dataAllocator::allocate(newCapacity);
                 iterator newFinish = istl::uninitialized_copy(begin(), end(), newStart);
                 newFinish = istl::uninitialized_fill_n(newFinish, lengthOfInsert, ch);
-
-                destroyAndDeallocate();
+                if(!isSSO()){
+                    destroyAndDeallocate();
+                }
                 _start = newStart;
                 _size = n;
                 _capacity = newCapacity - 1;
@@ -563,6 +564,121 @@ namespace istl
 		}
 		return os;
 	}
+
+    std::istream& operator >> (std::istream& is, string& str){
+        char ch;
+        while(is.get(ch)){
+            if(!isspace(ch)) break;
+        }
+        is.putback(ch);
+        str.clear();
+        while(is.get(ch)){
+            if(ch!=EOF && !isspace(ch)){
+                str.push_back(ch);
+            }else{
+                break;;
+            }
+        }
+        return is;
+    }
+
+    string operator+ (const string& lhs, const string& rhs){
+		string res(lhs);
+		return res += rhs;
+	}
+	string operator+ (const string& lhs, const char* rhs){
+		string res(lhs);
+		return res += rhs;
+	}
+	string operator+ (const char* lhs, const string& rhs){
+		string res(lhs);
+		return res += rhs;
+	}
+	string operator+ (const string& lhs, char rhs){
+		string res(lhs);
+		return res += rhs;
+	}
+	string operator+ (char lhs, const string& rhs){
+		string res(1, lhs);
+		return res += rhs;
+	}
+
+    bool operator== (const string& lhs, const string& rhs){
+		if (lhs.size() == rhs.size()){
+            int ret = lhs.compare(rhs);
+            return ret == 0;
+		}
+		return false;
+	}
+
+    bool operator== (const char*   lhs, const string& rhs){
+		if(std::strlen(lhs) == rhs.size()){
+            int ret = rhs.compare(lhs);
+            return ret == 0;
+        }
+        return false;
+	}
+
+    bool operator== (const string& lhs, const char*   rhs){
+        return rhs == lhs;
+	}
+    bool operator!= (const string& lhs, const string& rhs){
+		return !(lhs == rhs);
+	}
+    bool operator!= (const char*   lhs, const string& rhs){
+		return !(lhs == rhs);
+	}
+	bool operator!= (const string& lhs, const char*   rhs){
+		return !(lhs == rhs);
+	}
+    bool operator< (const string& lhs, const string& rhs){
+		return lhs.compare(rhs) < 0;
+	}
+	bool operator< (const char*   lhs, const string& rhs){
+		return rhs.compare(lhs) > 0;
+	}
+	bool operator< (const string& lhs, const char*   rhs){
+		return lhs.compare(rhs) < 0;
+	}
+    bool operator<= (const string& lhs, const string& rhs){
+		return lhs.compare(rhs) <= 0;
+	}
+	bool operator<= (const char*   lhs, const string& rhs){
+		return rhs.compare(lhs) >= 0;
+	}
+	bool operator<= (const string& lhs, const char*   rhs){
+		return lhs.compare(rhs) <= 0;
+	}
+	bool operator>  (const string& lhs, const string& rhs){
+		return !(lhs <= rhs);
+	}
+	bool operator>  (const char*   lhs, const string& rhs){
+		return !(lhs <= rhs);
+	}
+	bool operator>  (const string& lhs, const char*   rhs){
+		return !(lhs <= rhs);
+	}
+    bool operator>= (const string& lhs, const string& rhs){
+		return !(lhs < rhs);
+	}
+	bool operator>= (const char*   lhs, const string& rhs){
+		return !(lhs < rhs);
+	}
+	bool operator>= (const string& lhs, const char*   rhs){
+		return !(lhs < rhs);
+	}
+
+    void string::swap(string& str){
+        if(isSSO()){
+            std::swap(_buffer_size, str._buffer_size);
+            std::swap(_buffer, str._buffer);
+        }else{
+            std::swap(_start, str._start);
+            std::swap(_size, str._size);
+            std::swap(_capacity, str._capacity);
+        }
+    }
+
 
 
 

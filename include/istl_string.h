@@ -38,7 +38,7 @@ namespace istl
                 char _buffer[_SSO_THRESHOLD+1]; // 短字符串存储区
             };
             struct {
-                size_t _capacity : 63; // 长字符串的容量
+                size_t _capacity; // 长字符串的容量
                 size_t _size; // 长字符串的长度
                 char* _start; // 长字符串的起始指针
             };
@@ -160,7 +160,7 @@ namespace istl
 		template <class InputIterator>
 		string& replace(iterator i1, iterator i2, InputIterator first, InputIterator last);
 
-        //void swap(string str);
+        void swap(string &str);
         //size_t copy()...
 
         //find
@@ -207,30 +207,30 @@ namespace istl
 
         //运算符重载
         friend std::ostream& operator <<(std::ostream& os, const string&str);
-		// friend std::istream& operator >> (std::istream& is, string& str);
-		// friend string operator+ (const string& lhs, const string& rhs);
-		// friend string operator+ (const string& lhs, const char* rhs);
-		// friend string operator+ (const char* lhs, const string& rhs);
-		// friend string operator+ (const string& lhs, char rhs);
-		// friend string operator+ (char lhs, const string& rhs);
-		// friend bool operator== (const string& lhs, const string& rhs);
-		// friend bool operator== (const char*   lhs, const string& rhs);
-		// friend bool operator== (const string& lhs, const char*   rhs);
-		// friend bool operator!= (const string& lhs, const string& rhs);
-		// friend bool operator!= (const char*   lhs, const string& rhs);
-		// friend bool operator!= (const string& lhs, const char*   rhs);
-		// friend bool operator<  (const string& lhs, const string& rhs);
-		// friend bool operator<  (const char*   lhs, const string& rhs);
-		// friend bool operator<  (const string& lhs, const char*   rhs);
-		// friend bool operator<= (const string& lhs, const string& rhs);
-		// friend bool operator<= (const char*   lhs, const string& rhs);
-		// friend bool operator<= (const string& lhs, const char*   rhs);
-		// friend bool operator>  (const string& lhs, const string& rhs);
-		// friend bool operator>  (const char*   lhs, const string& rhs);
-		// friend bool operator>  (const string& lhs, const char*   rhs);
-		// friend bool operator>= (const string& lhs, const string& rhs);
-		// friend bool operator>= (const char*   lhs, const string& rhs);
-		// friend bool operator>= (const string& lhs, const char*   rhs);
+		friend std::istream& operator >> (std::istream& is, string& str);
+		friend string operator+ (const string& lhs, const string& rhs);
+		friend string operator+ (const string& lhs, const char* rhs);
+		friend string operator+ (const char* lhs, const string& rhs);
+		friend string operator+ (const string& lhs, char rhs);
+		friend string operator+ (char lhs, const string& rhs);
+		friend bool operator== (const string& lhs, const string& rhs);
+		friend bool operator== (const char*   lhs, const string& rhs);
+		friend bool operator== (const string& lhs, const char*   rhs);
+		friend bool operator!= (const string& lhs, const string& rhs);
+		friend bool operator!= (const char*   lhs, const string& rhs);
+		friend bool operator!= (const string& lhs, const char*   rhs);
+		friend bool operator<  (const string& lhs, const string& rhs);
+		friend bool operator<  (const char*   lhs, const string& rhs);
+		friend bool operator<  (const string& lhs, const char*   rhs);
+		friend bool operator<= (const string& lhs, const string& rhs);
+		friend bool operator<= (const char*   lhs, const string& rhs);
+		friend bool operator<= (const string& lhs, const char*   rhs);
+		friend bool operator>  (const string& lhs, const string& rhs);
+		friend bool operator>  (const char*   lhs, const string& rhs);
+		friend bool operator>  (const string& lhs, const char*   rhs);
+		friend bool operator>= (const string& lhs, const string& rhs);
+		friend bool operator>= (const char*   lhs, const string& rhs);
+		friend bool operator>= (const string& lhs, const char*   rhs);
 		// friend void swap(string& x, string& y);
 		// friend std::istream& getline(std::istream& is, string& str, char delim);
 		// friend std::istream& getline(std::istream& is, string& str);
