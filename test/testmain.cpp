@@ -34,25 +34,29 @@ int main(){
     //dequeBenchmark();
     // listBenchmark();
     istl::string s("123456");
+    istl::string s1("123456");
     //istl::string s1("0123456789012345678901234567");
     //s.insert(6, "123567");
     //s.insert(6, 20, 'a');
     //cout << s.compare(s1);
-    
-    s.resize(33);
-    cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+    //s += s1;
+    //cout << s <<endl;
+    //cout << s1 << endl;
 
-    s.resize(66);
-    cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+    // s.resize(33);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
 
-    s.resize(277);
-    cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+    // s.resize(66);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
 
-    s.resize(510);
-    cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+    // s.resize(277);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
 
-    s.resize(1300);
-    cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+    // s.resize(510);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
+
+    // s.resize(1300);
+    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
 
 
     

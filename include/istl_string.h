@@ -161,7 +161,7 @@ namespace istl
 		string& replace(iterator i1, iterator i2, InputIterator first, InputIterator last);
 
         void swap(string &str);
-        //size_t copy()...
+        size_type copy(char* dest, size_type count, size_type pos = 0 ) const;
 
         //find
         size_t find(const string& str, size_t pos = 0) const;
@@ -231,9 +231,9 @@ namespace istl
 		friend bool operator>= (const string& lhs, const string& rhs);
 		friend bool operator>= (const char*   lhs, const string& rhs);
 		friend bool operator>= (const string& lhs, const char*   rhs);
-		// friend void swap(string& x, string& y);
-		// friend std::istream& getline(std::istream& is, string& str, char delim);
-		// friend std::istream& getline(std::istream& is, string& str);
+		friend void swap(string& x, string& y);
+		friend std::istream& getline(std::istream& is, string& str, char delim);
+		friend std::istream& getline(std::istream& is, string& str);
 
     private:
     	template<typename InputIterator>

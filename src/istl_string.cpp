@@ -671,7 +671,9 @@ namespace istl
     void string::swap(string& str){
         if(isSSO()){
             std::swap(_buffer_size, str._buffer_size);
-            std::swap(_buffer, str._buffer);
+            for(int i=0; i<=_SSO_THRESHOLD; i++){
+                std::swap(_buffer[0], str._buffer[0]);
+            }
         }else{
             std::swap(_start, str._start);
             std::swap(_size, str._size);
@@ -679,8 +681,34 @@ namespace istl
         }
     }
 
+    typename string::size_type string::copy(char* dest, size_type count, size_type pos) const{
+        count = GetValidLenth(*this, pos, count);
+        const char* src = begin()+pos;
+        for(int i=0; i<count; i++){
+            *dest = *src;
+            ++dest, ++src;
+        }
+        return count;
+    }
 
+    void swap(string& x, string& y){
+        x.swap(y);
+    }
 
+    std::istream& getline(std::istream& is, string& str, char delim){
+		char ch;
+		str.clear();
+		while(is.get(ch)){
+			if (ch == delim)
+		        break;
+			else
+				str.push_back(ch);
+		}
+		return is;
+	}
+	std::istream& getline(std::istream& is, string& str){
+		return getline(is, str, '\n');
+	}
 
     void string::allocateAndFillN(size_t n, char ch){
         _start = dataAllocator::allocate(n+1);
@@ -756,6 +784,7 @@ namespace istl
             newCapacity = (needCapacity + 15) & (~15);
         */
 		size_type oldCapacity = capacity() + 1;
+        if(isSSO()) ++oldCapacity; //24
         size_type newCapacity = needCapacity < (2*oldCapacity) ? (2*oldCapacity) : ((needCapacity + 15) & (~15));
 		return newCapacity;
 	}
