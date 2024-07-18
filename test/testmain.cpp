@@ -34,11 +34,12 @@ int main(){
     //dequeBenchmark();
     // listBenchmark();
     istl::string s("01234567");
-    istl::string s1("0123456789012345678901234567");
+    //istl::string s1("0123456789012345678901234567");
     //s.insert(6, "123567");
-    s.insert(6, 20, 'a');
+    //s.insert(6, 20, 'a');
     cout << s;
     cout << endl;
+    cout << s.find("123", 0) << endl;
     cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
     // s.resize(33);
     // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;

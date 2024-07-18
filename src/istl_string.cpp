@@ -197,6 +197,326 @@ namespace istl
 		return insert(p, 1, ch);
 	}
 
+    // +=
+    string& string::operator+= (const string& str){
+        insert(size(), str);
+        return *this;
+    }
+
+    string& string::operator+= (const char* s){
+        return insert(size(), s);
+        return *this;
+    }
+
+    string& string::operator+= (char ch){
+        insert(end(), ch);
+        return *this;
+    }
+
+    string& string::append(const string& str){
+        (*this) += str;
+        return *this;
+    }
+
+    string& string::append(const string& str, size_t subindex, size_t sublen){
+        insert(size(), str, subindex, sublen);
+        return *this;
+    }
+
+    string& string::append(const char* s){
+        (*this) += s;
+        return *this;
+    }
+
+    string& string::append(const char* s, size_t n){
+        insert(size(), s, n);
+        return *this;
+    }
+
+    string& string::append(size_t n, char ch){
+        insert(size(),n, ch);
+        return *this;
+    }
+
+    //erase
+    typename string::iterator string::erase(iterator first, iterator last){
+        difference_type offset = last - first;
+        for(iterator it = last; it <=end(); ++it){
+            *(it-offset) = *(it);
+        }
+        return first;
+    }
+
+    typename string::iterator string::erase(iterator position){
+        return erase(position, position+1);
+    }
+
+    string& string::erase(size_t pos, size_t len){
+        len = GetValidLenth(*this, pos, len);
+        erase(begin()+pos, begin()+pos+len);
+        return *this;
+    }
+
+    // replace
+    string& string::replace(size_t pos, size_t len, const string& str){
+        return replace(begin()+pos, begin()+pos+len, str.begin(), str.end());
+    }
+    string& string::replace(iterator i1, iterator i2, const string& str){
+        return replace(i1, i2, str.begin(), str.end());
+    }
+    string& string::replace(size_t pos, size_t len, const string& str, size_t subpos, size_t sublen){
+        sublen = GetValidLenth(str, subpos, sublen);
+        return replace(begin()+pos, begin()+pos+len, str.begin()+subpos, str.begin()+subpos+sublen);
+    }
+    string& string::replace(size_t pos, size_t len, const char* s){
+        return replace(begin()+pos, begin()+pos+len, s, s+strlen(s));
+    }
+    string& string::replace(iterator i1, iterator i2, const char* s){
+        return replace(i1, i2, s, s+strlen(s));
+    }
+    string& string::replace(size_t pos, size_t len, const char* s, size_t n){
+        return replace(begin()+pos, begin()+pos+len, s, s+n);
+    }
+    string& string::replace(iterator i1, iterator i2, const char* s, size_t n){
+        return replace(i1, i2, s, s+n);
+    }
+    string& string::replace(size_t pos, size_t len, size_t n, char ch){
+        return replace(begin()+pos, begin()+pos+len, n, ch);
+    }
+    string& string::replace(iterator i1, iterator i2, size_t n, char ch){
+        iterator ptr = erase(i1, i2);
+        insert(ptr, n, ch);
+        return *this;
+    }
+
+    //find
+    size_t string::find(const string& str, size_t pos) const {
+        return find(str.c_str(), pos, str.size());
+    }
+
+    size_t string::find(const char* s, size_t pos) const {
+        return find(s, pos, std::strlen(s));
+    }
+    size_t string::find(const char* s, size_t pos, size_t n) const {
+        if (pos > size()) return istl::string::npos;
+        const char* h = c_str() + pos;
+        size_t remaining_length = size() - pos;
+
+        if (n == 0) return pos;
+
+        while (remaining_length >= n) {
+            h = (const char*)std::memchr(h, s[0], remaining_length);
+            if (!h) break;
+            if (std::memcmp(h, s, n) == 0) {
+                return h - c_str();
+            }
+            h++;
+            remaining_length = size() - (h - c_str());
+        }
+        return istl::string::npos;
+    }
+
+    size_t string::find(char ch, size_t pos) const {
+        if (pos >= size()) return istl::string::npos;
+        const char* h = c_str() + pos;
+        const char* result = (const char*)std::memchr(h, ch, size() - pos);
+        return result ? result - c_str() : std::string::npos;
+    }
+
+    size_t string::rfind(const string& str, size_t pos) const {
+        return rfind(str.c_str(), pos, str.size());
+    }
+
+    size_t string::rfind(const char* s, size_t pos) const {
+        return rfind(s, pos, std::strlen(s));
+    }
+
+    size_t string::rfind(const char* s, size_t pos, size_t n) const {
+        if (n == 0) return (pos < size()) ? pos : size();
+        if (size() < n) return istl::string::npos;
+
+        pos = std::min(pos, size() - n);
+        const char* start = c_str();
+        const char* p;
+
+        for (p = start + pos; p >= start; --p) {
+            if (*p == *s && std::memcmp(p, s, n) == 0) {
+                return p - start;
+            }
+        }
+        return std::string::npos;
+    }
+
+    size_t string::rfind(char ch, size_t pos) const {
+        if (empty()) return istl::string::npos;
+
+        pos = std::min(pos, size() - 1);
+        const char* start = c_str();
+
+        for (const char* p = start + pos; p >= start; --p) {
+            if (*p == ch) {
+                return p - start;
+            }
+        }
+        return std::string::npos;
+    }
+
+    size_t string::find_first_of(const string& str, size_t pos) const {
+        return find_first_of(str.c_str(), pos, str.size());
+    }
+
+    size_t string::find_first_of(const char* s, size_t pos) const {
+        return find_first_of(s, pos, std::strlen(s));
+    }
+
+    size_t string::find_first_of(const char* s, size_t pos, size_t n) const {
+        if (pos >= size()) return istl::string::npos;
+        const char *data = c_str();
+
+        for (size_t i = pos; i < size(); ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                if (data[i] == s[j]) {
+                    return i;
+                }
+            }
+        }
+
+        return istl::string::npos;
+    }
+
+    size_t string::find_first_of(char ch, size_t pos) const {
+        if (pos >= size()) return istl::string::npos;
+        const char *data = c_str();
+
+        for (size_t i = pos; i < size(); ++i) {
+            if (data[i] == ch) {
+                return i;
+            }
+        }
+
+        return istl::string::npos;
+    }
+
+    size_t string::find_last_of(const string& str, size_t pos) const {
+        return find_last_of(str.c_str(), pos, str.size());
+    }
+
+    size_t string::find_last_of(const char* s, size_t pos) const {
+        return find_last_of(s, pos, std::strlen(s));
+    }
+
+    size_t string::find_last_of(const char* s, size_t pos, size_t n) const {
+        if (empty() || n == 0) return istl::string::npos;
+        if (pos >= size()) pos = size() - 1;
+        const char *data = c_str();
+        
+        for (size_t i = pos + 1; i-- > 0; ) {
+            for (size_t j = 0; j < n; ++j) {
+                if (data[i] == s[j]) {
+                    return i;
+                }
+            }
+        }
+        return istl::string::npos;
+    }
+
+    size_t string::find_last_of(char ch, size_t pos) const {
+        if (empty()) return istl::string::npos;
+        if (pos >= size()) pos = size() - 1;
+        const char *data = c_str();
+
+        for (size_t i = pos + 1; i-- > 0; ) {
+            if (data[i] == ch) {
+                return i;
+            }
+        }
+        return std::string::npos;
+    }
+
+    size_t string::find_first_not_of(const string& str, size_t pos) const {
+        return find_first_not_of(str.c_str(), pos, str.size());
+    }
+
+    size_t string::find_first_not_of(const char* s, size_t pos) const {
+        return find_first_not_of(s, pos, std::strlen(s));
+    }
+
+    size_t string::find_first_not_of(const char* s, size_t pos, size_t n) const {
+        if (pos >= size()) return istl::string::npos;
+        const char *data = c_str();
+
+        for (size_t i = pos; i < size(); ++i) {
+            bool found = false;
+            for (size_t j = 0; j < n; ++j) {
+                if (data[i] == s[j]) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return i;
+            }
+        }
+
+        return istl::string::npos;
+    }
+
+    size_t string::find_first_not_of(char ch, size_t pos) const {
+        if (pos >= size()) return istl::string::npos;
+        const char *data = c_str();
+
+        for (size_t i = pos; i < size(); ++i) {
+            if (data[i] != ch) {
+                return i;
+            }
+        }
+
+        return istl::string::npos;
+    }
+
+    size_t string::find_last_not_of(const string& str, size_t pos) const {
+        return find_last_not_of(str.c_str(), pos, str.size());
+    }
+
+    size_t string::find_last_not_of(const char* s, size_t pos) const {
+        return find_last_not_of(s, pos, std::strlen(s));
+    }
+
+    size_t string::find_last_not_of(const char* s, size_t pos, size_t n) const {
+        if (empty()) return istl::string::npos;
+        if (pos >= size()) pos = size() - 1;
+        const char *data = c_str();
+
+        for (size_t i = pos + 1; i-- > 0; ) {
+            bool found = false;
+            for (size_t j = 0; j < n; ++j) {
+                if (data[i] == s[j]) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return i;
+            }
+        }
+
+        return istl::string::npos;
+    }
+
+    size_t string::find_last_not_of(char ch, size_t pos) const {
+        if (empty()) return std::string::npos;
+        if (pos >= size()) pos = size() - 1;
+        const char *data = c_str();
+
+        for (size_t i = pos + 1; i-- > 0; ) {
+            if (data[i] != ch) {
+                return i;
+            }
+        }
+
+        return istl::string::npos;
+    }
+
     //运算符重载
     std::ostream& operator <<(std::ostream& os, const string& str){
 		for (const auto ch : str){

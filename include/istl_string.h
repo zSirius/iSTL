@@ -129,6 +129,73 @@ namespace istl
         template <class InputIterator>
 		iterator insert(iterator pos, InputIterator first, InputIterator last);
 
+        string& operator+= (const string& str);
+		string& operator+= (const char* s);
+		string& operator+= (char ch);
+
+        string& append(const string& str);
+		string& append(const string& str, size_t subpos, size_t sublen = npos);
+		string& append(const char* s);
+		string& append(const char* s, size_t n);
+		string& append(size_t n, char ch);
+		template <class InputIterator>
+		string& append(InputIterator first, InputIterator last);
+
+        string& erase(size_t pos = 0, size_t len = npos);
+		iterator erase(iterator position);
+		iterator erase(iterator first, iterator last);
+
+        void push_back(char ch){ insert(end(), ch); }
+        void pop_back(){ erase(end()-1, end()); }
+
+        string& replace(size_t pos, size_t len, const string& str);
+		string& replace(iterator i1, iterator i2, const string& str);
+		string& replace(size_t pos, size_t len, const string& str, size_t subpos, size_t sublen = npos);
+		string& replace(size_t pos, size_t len, const char* s);
+		string& replace(iterator i1, iterator i2, const char* s);
+		string& replace(size_t pos, size_t len, const char* s, size_t n);
+		string& replace(iterator i1, iterator i2, const char* s, size_t n);
+		string& replace(size_t pos, size_t len, size_t n, char ch);
+		string& replace(iterator i1, iterator i2, size_t n, char ch);
+		template <class InputIterator>
+		string& replace(iterator i1, iterator i2, InputIterator first, InputIterator last);
+
+        //void swap(string str);
+        //size_t copy()...
+
+        //find
+        size_t find(const string& str, size_t pos = 0) const;
+		size_t find(const char* s, size_t pos = 0) const;
+		size_t find(const char* s, size_t pos, size_t n) const;
+		size_t find(char ch, size_t pos = 0) const;
+        /* https://en.cppreference.com/w/cpp/string/basic_string/rfind */
+        size_t rfind(const string& str, size_t pos = npos) const;
+		size_t rfind(const char* s, size_t pos = npos) const;
+		size_t rfind(const char* s, size_t pos, size_t n) const;
+		size_t rfind(char ch, size_t pos = npos) const;
+        /* https://en.cppreference.com/w/cpp/string/basic_string/find_first_of */
+        size_t find_first_of(const string& str, size_t pos = 0) const;
+		size_t find_first_of(const char* s, size_t pos = 0) const;
+		size_t find_first_of(const char* s, size_t pos, size_t n) const;
+		size_t find_first_of(char ch, size_t pos = 0) const;
+
+        size_t find_last_of(const string& str, size_t pos = npos) const;
+		size_t find_last_of(const char* s, size_t pos = npos) const;
+		size_t find_last_of(const char* s, size_t pos, size_t n) const;
+		size_t find_last_of(char ch, size_t pos = npos) const;
+
+        size_t find_first_not_of(const string& str, size_t pos = 0) const;
+		size_t find_first_not_of(const char* s, size_t pos = 0) const;
+		size_t find_first_not_of(const char* s, size_t pos, size_t n) const;
+		size_t find_first_not_of(char ch, size_t pos = 0) const;
+
+		size_t find_last_not_of(const string& str, size_t pos = npos) const;
+		size_t find_last_not_of(const char* s, size_t pos = npos) const;
+		size_t find_last_not_of(const char* s, size_t pos, size_t n) const;
+		size_t find_last_not_of(char ch, size_t pos = npos) const;
+
+
+
         //运算符重载
         friend std::ostream& operator <<(std::ostream& os, const string&str);
 		// friend std::istream& operator >> (std::istream& is, string& str);
@@ -240,6 +307,18 @@ namespace istl
         return begin()+len;
 	}
 
+    template <class InputIterator>
+	string& string::append(InputIterator first, InputIterator last){
+        insert(end(), first, last);
+        return *this;
+    }
+
+    template <class InputIterator>
+    string& string::replace(iterator i1, iterator i2, InputIterator first, InputIterator last){
+        iterator ptr = erase(i1, i2);
+        insert(ptr, first, last);
+        return *this;
+    }
 
 
 } // namespace istl
