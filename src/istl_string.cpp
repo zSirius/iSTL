@@ -517,6 +517,45 @@ namespace istl
         return istl::string::npos;
     }
 
+    //compare
+    int string::compare(const string& str)const{
+        return std::strcmp(c_str(), str.c_str());
+    }
+
+    int string::compare(size_t pos, size_t len, const string& str)const{
+        return compare(pos, len, str, 0, str.size());
+    }
+
+    int string::compare(size_t pos, size_t len, const string& str, size_t subpos, size_t sublen) const{
+        len = GetValidLenth(*this, pos, len);
+        sublen = GetValidLenth(str, subpos, sublen);
+        int ret = strncmp(c_str()+pos, str.c_str()+subpos, std::min(len, sublen));
+        if(ret == 0){
+            if(len > sublen) ret = 1;
+            else if(len < sublen) ret = -1;
+        }
+        return ret;
+    }
+
+    int string::compare(const char* s) const{
+        return compare(0, size(), s, std::strlen(s));
+    }
+
+    int string::compare(size_t pos, size_t len, const char* s) const{
+        return compare(pos, len, s, std::strlen(s));
+    }
+
+    int string::compare(size_t pos, size_t len, const char* s, size_t n) const{
+        len = GetValidLenth(*this, pos, len);
+        n = std::min(n, std::strlen(s));
+        int ret = strncmp(c_str()+pos, s, std::min(len, n));
+        if(ret == 0){
+            if(len > n) ret = 1;
+            else if(len < n) ret = -1;
+        }
+        return ret;
+    }
+
     //运算符重载
     std::ostream& operator <<(std::ostream& os, const string& str){
 		for (const auto ch : str){

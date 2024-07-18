@@ -194,6 +194,15 @@ namespace istl
 		size_t find_last_not_of(const char* s, size_t pos, size_t n) const;
 		size_t find_last_not_of(char ch, size_t pos = npos) const;
 
+        //compare
+        int compare(const string& str) const;
+		int compare(size_t pos, size_t len, const string& str) const;
+		int compare(size_t pos, size_t len, const string& str,
+			size_t subpos, size_t sublen = npos) const;
+		int compare(const char* s) const;
+		int compare(size_t pos, size_t len, const char* s) const;
+		int compare(size_t pos, size_t len, const char* s, size_t n) const;
+
 
 
         //运算符重载
