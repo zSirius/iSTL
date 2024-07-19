@@ -10,6 +10,13 @@
 - 容器适配器stack、queue
 - 迭代器适配器Reverse_iterator
 - uninitialized族初始化函数
+- string类及其接口
+
+### 实现细节说明
+#### string
+- string采用了短字符串优化技术（Small String Optimization，SSO），参考libc++/llvm/clang的实现，采用空间利用率最高的一种SSO实现方式，在64bit机器上，本地缓存区高达22字节。该实现与机器相关，本项目实现的是64bit小端序。
+- 对于长字符串，采用传统的eager copy方式，在堆上分配内存。
+- string的内存增长策略与llvm/clang实现一致，详见`istl::string::getNewCapacity函数注释。
 
 
 

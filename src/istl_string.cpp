@@ -241,10 +241,12 @@ namespace istl
 
     //erase
     typename string::iterator string::erase(iterator first, iterator last){
+        size_t oldsize = size();
         difference_type offset = last - first;
         for(iterator it = last; it <=end(); ++it){
             *(it-offset) = *(it);
         }
+        setSize(oldsize - offset);
         return first;
     }
 
@@ -672,7 +674,7 @@ namespace istl
         if(isSSO()){
             std::swap(_buffer_size, str._buffer_size);
             for(int i=0; i<=_SSO_THRESHOLD; i++){
-                std::swap(_buffer[0], str._buffer[0]);
+                std::swap(_buffer[i], str._buffer[i]);
             }
         }else{
             std::swap(_start, str._start);
