@@ -8,6 +8,7 @@
 #include "queue.h"
 #include "istl_string.h"
 #include "vector.h"
+#include "rbtree.h"
 
 // void vectorBenchmark();
 // void dequeBenchmark();
@@ -30,58 +31,7 @@ using namespace std;
 
 
 int main(){
-    //vectorBenchmark();
-    //dequeBenchmark();
-    // listBenchmark();
-    istl::string s("123456");
-    istl::string s1("123456");
-    //istl::string s1("0123456789012345678901234567");
-    s.insert(6, "123567");
-    //s.insert(6, 20, 'a');
-    //cout << s.compare(s1);
-    //s += s1;
-    cout << s <<endl;
-    cout << s1 << endl;
-
-    // s.resize(33);
-    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
-
-    // s.resize(66);
-    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
-
-    // s.resize(277);
-    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
-
-    // s.resize(510);
-    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
-
-    // s.resize(1300);
-    // cout << "s.size = " << s.size() << " s.capacity = " << s.capacity() << endl;
-
-
-    
-    
-    //istl::string s2 = "122222";
-
-    // cout << s.isSSO() << endl;
-    // cout << &s._capacity << " " << &s._size << " " << &s._start << endl;
-    // cout << "Size of istl::string: " << sizeof(s) << endl;
-    // cout << "Address of s.sso.size: " << static_cast<void*>(&s._buffer_size) << endl;
-    // cout << "Address of s.sso.buffer[0]: " << static_cast<void*>(&s._buffer[0]) << endl;
-
-    // istl::vector<int> v{1,2,3,4,5,6}, v2{90,91,92,93,94};
-    // for(auto t : v){
-    //     cout << t << " ";
-    // }
-    // cout << endl;
-
-    // v.reserve(100);
-
-    // v.insert(v.begin()+1, 10, 5);
-
-    // for(auto t : v){
-    //     cout << t << " ";
-    // }
+    istl::_Rb_tree<int, int, std::pair<int,int>, istl::less<int> > rb;
 
     return 0;
 }

@@ -25,8 +25,8 @@ namespace istl
                 */
                 __x = __y;
             }
-            return __x;
         }
+        return __x;
     }
 
     _Rb_tree_node_base* 
@@ -321,10 +321,11 @@ namespace istl
                         break;
                     }
                 }
-                if(__x) __x->_color = _black;
             }
-            return __y;
+            if(__x) __x->_color = _black;
         }
+        return __y;
+    }
     
     // unsigned int
     // _Rb_tree_black_count(const _Rb_tree_node_base* __node, const _Rb_tree_node_base* __root){
