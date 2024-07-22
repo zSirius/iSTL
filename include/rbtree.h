@@ -8,6 +8,9 @@
 #include "allocator.h"
 #include "ReverseIterator.h"
 
+//debug
+#include <queue>
+
 namespace istl
 {
     enum _Rb_tree_color { _red = false, _black = true };
@@ -59,7 +62,7 @@ namespace istl
     };
     
     _Rb_tree_node_base* _Rb_tree_increment(_Rb_tree_node_base* __x);
-   const _Rb_tree_node_base* _Rb_tree_increment(const _Rb_tree_node_base* __x);
+    const _Rb_tree_node_base* _Rb_tree_increment(const _Rb_tree_node_base* __x);
     _Rb_tree_node_base* _Rb_tree_decrement(_Rb_tree_node_base* __x);
     const _Rb_tree_node_base*_Rb_tree_decrement(const _Rb_tree_node_base* __x);
 
@@ -238,7 +241,7 @@ namespace istl
 
     // 红黑树类
     template<typename Key, typename Value, typename KeyOfValue, 
-             typename Compare, typename Alloc = istl::allocator< _Rb_tree_node<KeyOfValue> >>
+             typename Compare, typename Alloc = istl::allocator< _Rb_tree_node<Value> >>
     class _Rb_tree 
     {
     public:
@@ -309,7 +312,7 @@ namespace istl
  
         _Const_Base_ptr _end() const { return &this->_impl._header; }
 
-        static const Key& _S_key(_Const_Link_type __x)
+        static const Key _S_key(_Const_Link_type __x)
         {
          // If we're asking for the key we're presumably using the comparison
          // object, and so this is a good place to sanity check it.
@@ -335,7 +338,7 @@ namespace istl
         _S_right(_Const_Base_ptr __x)
         { return static_cast<_Const_Link_type>(__x->_right); }
 
-        static const Key&
+        static const Key
         _S_key(_Const_Base_ptr __x)
         { return _S_key(static_cast<_Const_Link_type>(__x)); }
 
@@ -449,6 +452,8 @@ namespace istl
         void
         _erase_aux(const_iterator __first, const_iterator __last);
 
+        void _erase(_Link_type __x); //erase without rebalance
+
 
         public:
         // insert
@@ -485,8 +490,6 @@ namespace istl
             _erase_aux(__position);
             return __result;
         }
-
-        void _erase(_Link_type __x); //erase without rebalance
 
         size_type
         erase(const key_type& __x);
@@ -553,6 +556,37 @@ public:
        std::pair<const_iterator, const_iterator>
        equal_range(const key_type& __k) const;
 
+    public:
+    //debug
+        void print_rbtree(){
+            _Link_type root = _begin();
+            if (root == nullptr) {
+                std::cout << "null" << std::endl;
+                return;
+            }
+            std::queue<_Base_ptr> q;
+            q.push(root);
+            while (!q.empty()) {
+                
+                
+                auto n = q.size();
+                for(int i=0; i<n; i++){
+                    _Base_ptr node = q.front();
+                    q.pop();
+                    if (node) {
+                        std::cout <<  _S_key(node);
+                        if(node->_color == _red) std::cout << "_red" << " ";
+                        else std::cout << "_black" << " ";
+                        q.push(node->_left);
+                        q.push(node->_right);
+                    } else {
+                        std::cout << "null ";
+                    }
+                }
+                std::cout << std::endl;
+            }
+            std::cout << std::endl;
+        }
     };
 
     // insert
@@ -629,7 +663,7 @@ public:
         bool __insert_left = (__x != 0 || __p == _end()
                                || _key_compare(KeyOfValue()(__v),
                                                          _S_key(__p)));
-        _Link_type __z = create_node(__v);
+        _Link_type __z = _create_node(__v);
         _Rb_tree_insert_and_rebalance(__insert_left, __z, __p,
                                        this->_impl._header);
          ++_impl._node_count;
@@ -803,22 +837,6 @@ public:
         return std::pair<const_iterator, const_iterator>(const_iterator(__y),
                                                    const_iterator(__y));
     }
-
-    // template<typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc>
-    // typename _Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>::iterator
-    // _Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>::find(const Key& __k){
-    //     iterator __j = _lower_bound(_begin(), _end(), __k);
-    //     return (__j == end()
-    //             || _key_compare(__k,_S_key(__j._node))) ? end() : __j;
-    // }
-    
-    // template<typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc>
-    // typename _Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>::const_iterator
-    // _Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>::find(const Key& __k)const{
-    //     const_iterator __j = _lower_bound(_begin(), _end(), __k);
-    //     return (__j == end()
-    //             || _key_compare(__k,_S_key(__j._node))) ? end() : __j;
-    // }
 
     template<typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc>
     typename _Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>::size_type

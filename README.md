@@ -8,16 +8,25 @@
 - 空间配置器allocator
 - 容器vector、deuqe、list及其迭代器
 - 容器适配器stack、queue
-- 迭代器适配器Reverse_iterator
+- 迭代器适配器reverse_iterator
 - uninitialized族初始化函数
 - string类及其接口
 
 ## 实现细节说明
+### 空间配置器 alloc / allocator
+- 空间配置器alloc底层使用malloc申请内存，并使用placement new 运算符在内存上调用需要初始化对象的构造函数
+- 对于小内存 (<=128B) ，采用分离适配的方式，以大小类为依据维护成多条空闲内存块的自由链表，避免频繁调用malloc分配小内存
+- alloctor是对alloc进一步封装的模板类，上层容器直接使用alloctor申请和释放内存
+
 ### string
 - string采用了短字符串优化技术（Small String Optimization，SSO），参考libc++/llvm/clang的实现，采用空间利用率最高的一种SSO实现方式，在64bit机器上，本地缓存区高达22字节。该实现与机器相关，本项目基于64bit小端序机器实现。
 - 对于长字符串，采用传统的eager copy方式，在堆上分配内存。
-- string的内存增长策略与llvm/clang实现一致，详见`istl::string::getNewCapacity函数注释。
+- string的内存增长策略与llvm/clang实现一致，详见`istl::string::getNewCapacity`函数注释。
 
+string内部数据结构如下：
+![alt text](./image/image-1.png)
+![alt text](./image/image.png)
+![alt text](./image/image-2.png)
 
 
 ## 性能测试及单元测试
