@@ -91,7 +91,7 @@ namespace istl
         iterator erase(iterator pos) { return _tree.erase(pos); }
         iterator erase(iterator first, iterator last) { return _tree.erase(first, last); }
         iterator erase(const_iterator first, const_iterator last) { return _tree.erase(first, last); }
-        iterator erase(const key_type& key){ return _tree.erase(key); }
+        size_type erase(const key_type& key){ return _tree.erase(key); }
 
         // lookup
         size_type count(const key_type& key)const { return _tree.count(key); }
@@ -107,6 +107,9 @@ namespace istl
 
         // observers
         key_compare key_comp()const { return _tree.key_comp(); }
+    
+    public://debug
+        void printrbt(){ _tree.print_rbtree(); }
 
 
     };

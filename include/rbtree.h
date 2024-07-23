@@ -705,10 +705,10 @@ public:
             __x = __y;
         }
     }
- 
+
     template<typename Key, typename Val, typename KeyOfValue,typename Compare, typename Alloc>
     typename _Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>::size_type
-    _Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>::erase(const Key& __x)
+    _Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>::erase(const key_type& __x)
     {
         std::pair<iterator, iterator> __p = equal_range(__x);
         const size_type __old_size = size();
@@ -803,7 +803,7 @@ public:
                 __xu = _S_right(__xu);
                 return std::pair<iterator,
                             iterator>(_lower_bound(__x, __y, __k),
-                                        _upper_bound(__xu, __yu, __k));
+                                      _upper_bound(__xu, __yu, __k));
             }
         }
         return std::pair<iterator, iterator>(iterator(__y),

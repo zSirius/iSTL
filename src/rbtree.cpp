@@ -272,7 +272,7 @@ namespace istl
                     if(__w->_color == _red){
                         __w->_color = _black;
                         __x_parent->_color = _red;
-                        local_Rb_tree_rotate_right(__x_parent, __root);
+                        local_Rb_tree_rotate_left(__x_parent, __root);
                         __w = __x_parent->_right;
                     }
 

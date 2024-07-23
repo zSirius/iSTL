@@ -7,7 +7,7 @@ using namespace std;
 using namespace chrono;
 
 static const int numTests = 5; 
-static const size_t testSize = 1e8;
+static const size_t testSize = 1e7;
 
 #define MEASURE_TIME(operation, duration) \
     start = high_resolution_clock::now(); \
@@ -196,4 +196,13 @@ void dequeBenchmark() {
     cout << "Average time for std::deque pop_front: " << std_deq_pop_front_time / numTests << " microseconds" << endl;
     cout << "Average time for istl::deque pop_front: " << istl_deq_pop_front_time / numTests << " microseconds" << endl;
 }
+
+// // 主函数，用于运行性能测试
+// int main(int argc, char **argv) {
+
+//     // 运行特定的性能测试
+//     dequeBenchmark();
+
+//     return 0;
+// }
 

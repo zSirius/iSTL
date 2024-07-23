@@ -36,7 +36,7 @@ namespace istl
                         build_heap();
                        }
         
-        bool empty()const { return _container.empty(); }
+        bool empty() { return _container.empty(); }
         size_type size() { return _container.size(); }
         const_reference top()const { return _container.front(); }
 
