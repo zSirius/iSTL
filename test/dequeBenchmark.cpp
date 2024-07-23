@@ -1,13 +1,13 @@
 #include <iostream>
 #include <deque>
 #include <chrono>
-#include "deque.h" // 包含你实现的 istl::deque 头文件
+#include "deque.h" 
 
 using namespace std;
 using namespace chrono;
 
 static const int numTests = 5; 
-static const size_t testSize = 1e7;
+static const size_t testSize = 1e2;
 
 #define MEASURE_TIME(operation, duration) \
     start = high_resolution_clock::now(); \

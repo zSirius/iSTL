@@ -31,3 +31,10 @@
     ],
     "version": "2.0.0"
 }
+
+/*
+gtest need use next options:
+"-lgtest",
+"-lgtest_main",
+"-pthread",
+*/

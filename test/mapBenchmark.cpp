@@ -6,8 +6,8 @@
 using namespace std;
 using namespace chrono;
 
-const int numTests = 20;
-const size_t testSize = 100000;
+static const int numTests = 20;
+static const size_t testSize = 100;
 
 #define MEASURE_TIME(operation, duration) \
     start = high_resolution_clock::now(); \
@@ -69,13 +69,4 @@ void mapBenchmark() {
 
     cout << "Average time for std::map erase: " << std_map_erase_time / numTests << " microseconds" << endl;
     cout << "Average time for istl::map erase: " << istl_map_erase_time / numTests << " microseconds" << endl;
-}
-
-// 主函数，用于运行性能测试
-int main(int argc, char **argv) {
-
-    // 运行特定的性能测试
-    mapBenchmark();
-
-    return 0;
 }

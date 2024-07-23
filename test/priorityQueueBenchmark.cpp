@@ -3,13 +3,13 @@
 #include <vector>
 #include <algorithm>
 #include <chrono>
-#include "priority_queue.h" // 包含你实现的 istl::priority_queue 头文件
+#include "priority_queue.h" 
 
 using namespace std;
 using namespace chrono;
 
-const int numTests = 20;
-const size_t testSize = 10000000;
+static const int numTests = 20;
+static const size_t testSize = 100;
 
 #define MEASURE_TIME(operation, duration) \
     start = high_resolution_clock::now(); \
