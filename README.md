@@ -23,11 +23,6 @@
 - 对于长字符串，采用传统的eager copy方式，在堆上分配内存。
 - string的内存增长策略与llvm/clang实现一致，详见`istl::string::getNewCapacity`函数注释。
 
-string内部数据结构如下：
-![alt text](./image/image-1.png)
-![alt text](./image/image.png)
-![alt text](./image/image-2.png)
-
 
 ## 性能测试及单元测试
 

@@ -10,6 +10,7 @@
 #include "vector.h"
 #include "rbtree.h"
 #include "map.h"
+#include "priority_queue.h"
 
 // void vectorBenchmark();
 // void dequeBenchmark();
@@ -48,7 +49,7 @@ int main(){
 
     // 设置随机数种子
     srand(time(0));
-    std::vector<int> v;
+    istl::vector<int> v;
 
 
 
@@ -64,14 +65,37 @@ int main(){
 
     // rb.print_rbtree();
     istl::map<int,int> mp;
+
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dis(0, 1000);
+    
     // 生成并打印20个1到100之间的随机数
-    for (int i = 0; i < 100; ++i) {
-        int randomNumber = rand() % 100 + 1; // 生成1到100之间的随机数
-        cout << i << ":"<< randomNumber << endl;
-        v.push_back(randomNumber);
+    for (int i = 0; i < 15; ++i) {
+        int randomNumber = dis(gen);; // 生成1到100之间的随机数
+        //cout << i << ":"<< randomNumber << endl;
+        //v.push_back(randomNumber);
+        //mp.insert(make_pair(randomNumber, i));
         mp[randomNumber] = i;
     }
+
+    auto it = mp.begin();
+    cout << mp.size() << endl;;
+    for(int i=0; i<mp.size(); ++i){
+        cout << (it++)->first << " "; 
+    }
     cout << endl;
+    it = mp.begin();
+    for(int i=0; i<mp.size(); ++i){
+        cout << mp.lower_bound((it++)->first)->first << " "; 
+    }
+    cout << endl;
+    it = mp.begin();
+    for(int i=0; i<mp.size(); ++i){
+        cout << mp.upper_bound((it++)->first)->first << " "; 
+    }
+    cout << endl;
+    cout << "ok!" << endl;
 
     return 0;
 }

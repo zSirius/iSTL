@@ -46,7 +46,7 @@ namespace istl
         T& operator[] (const key_type& key) { 
             iterator it = (find(key));
             if(it == end()){
-                insert(std::make_pair(key, mapped_type()));
+                it = insert(std::make_pair(key, mapped_type())).first;
             }
             return it->second;
         }
