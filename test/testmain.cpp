@@ -9,6 +9,7 @@
 #include "istl_string.h"
 #include "vector.h"
 #include "rbtree.h"
+#include "map.h"
 
 // void vectorBenchmark();
 // void dequeBenchmark();
@@ -30,7 +31,7 @@ using namespace std;
 
 struct GetFirst {
     template <typename T1, typename T2>
-    T1 operator()(const std::pair<T1, T2>& p) const {
+    const T1& operator()(const std::pair<T1, T2>& p) const {
         return p.first;
     }
 };
@@ -43,32 +44,34 @@ struct ComparePairs {
 };
 
 int main(){
-    istl::_Rb_tree<int, std::pair<int,int>, GetFirst, ComparePairs > rb;
+    // istl::_Rb_tree<int, std::pair<int,int>, GetFirst, std::less<int> > rb;
 
     // 设置随机数种子
     srand(time(0));
     std::vector<int> v;
 
+
+
+
+    // // for(int i=0; i<v.size(); i+=10){
+    // //     rb.erase(v[i]);
+    // // }
+
+    // for(int i=0; i<v.size(); i++){
+    //     auto it = rb.find(v[i]);
+    //     cout << it->first <<endl;
+    // }
+
+    // rb.print_rbtree();
+    istl::map<int,int> mp;
     // 生成并打印20个1到100之间的随机数
     for (int i = 0; i < 100; ++i) {
         int randomNumber = rand() % 100 + 1; // 生成1到100之间的随机数
         cout << i << ":"<< randomNumber << endl;
         v.push_back(randomNumber);
-        rb._insert_unique(std::make_pair(randomNumber, i));
+        mp[randomNumber] = i;
     }
     cout << endl;
-
-
-    // for(int i=0; i<v.size(); i+=10){
-    //     rb.erase(v[i]);
-    // }
-
-    for(int i=0; i<v.size(); i++){
-        auto it = rb.find(v[i]);
-        cout << it->first <<endl;
-    }
-
-    rb.print_rbtree();
 
     return 0;
 }

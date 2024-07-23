@@ -80,6 +80,7 @@
         "condition_variable": "cpp",
         "iomanip": "cpp",
         "chrono": "cpp",
-        "scoped_allocator": "cpp"
+        "scoped_allocator": "cpp",
+        "queue": "cpp"
     }
 }

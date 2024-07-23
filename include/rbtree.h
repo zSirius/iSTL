@@ -127,18 +127,18 @@ namespace istl
     template<typename _Tp>
     struct _Rb_tree_const_iterator
     {
-        typedef _Tp        value_type;
-        typedef const _Tp& reference;
+        typedef _Tp                                         value_type;
+        typedef const _Tp&                                  reference;
         typedef const _Tp* pointer;
 
-        typedef _Rb_tree_iterator<_Tp> iterator;
+        typedef _Rb_tree_iterator<_Tp>                      iterator;
 
-        typedef bidirectional_iterator_tag iterator_category;
-        typedef ptrdiff_t                  difference_type;
+        typedef bidirectional_iterator_tag                  iterator_category;
+        typedef ptrdiff_t                                   difference_type;
 
-        typedef _Rb_tree_const_iterator<_Tp>              _Self;
-        typedef _Rb_tree_node_base::_Const_Base_ptr       _Base_ptr;
-        typedef const _Rb_tree_node<_Tp>*                 _Link_type;
+        typedef _Rb_tree_const_iterator<_Tp>                _Self;
+        typedef _Rb_tree_node_base::_Const_Base_ptr         _Base_ptr;
+        typedef const _Rb_tree_node<_Tp>*                   _Link_type;
 
         _Base_ptr _node;
 
@@ -312,7 +312,7 @@ namespace istl
  
         _Const_Base_ptr _end() const { return &this->_impl._header; }
 
-        static const Key _S_key(_Const_Link_type __x)
+        static const Key& _S_key(_Const_Link_type __x)
         {
          // If we're asking for the key we're presumably using the comparison
          // object, and so this is a good place to sanity check it.
@@ -338,7 +338,7 @@ namespace istl
         _S_right(_Const_Base_ptr __x)
         { return static_cast<_Const_Link_type>(__x->_right); }
 
-        static const Key
+        static const Key&
         _S_key(_Const_Base_ptr __x)
         { return _S_key(static_cast<_Const_Link_type>(__x)); }
 
